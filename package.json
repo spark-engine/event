@@ -1,0 +1,26 @@
+{
+  "name": "compose-event",
+  "version": "1.0.0",
+  "description": "Event management utility unifying microjs event frameworks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/compose-ui/event.git"
+  },
+  "keywords": [
+    "events"
+  ],
+  "author": "Brandon Mathis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/compose-ui/event/issues"
+  },
+  "homepage": "https://github.com/compose-ui/event#readme",
+  "dependencies": {
+    "bean": "^1.0.14",
+    "keymaster": "^1.6.2"
+  }
+}
