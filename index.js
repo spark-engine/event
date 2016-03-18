@@ -1,6 +1,7 @@
 var bean = require('bean')
-var animationEvent = require('./lib/animation-event.js')
 var key = require('keymaster')
+var animationEvent = require('./lib/animation-events.js')
+var page = require('./lib/page-events.js')
 
 module.exports = {
   on: on,
@@ -11,7 +12,9 @@ module.exports = {
   key: key,
   onKey: key,
   offKey: key.unbind,
-  oneKey: oneKey
+  oneKey: oneKey,
+  ready: page.ready,
+  change: page.change
 }
 
 function on (element, events, selector, fn) {
@@ -31,6 +34,7 @@ function oneKey (keys, scope, fn) {
     fn = scope
     scope = 'all'
   }
+
   key(keys, scope, function(event) {
     key.unbind(keys, scope)
     fn(event)
