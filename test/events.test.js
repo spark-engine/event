@@ -1,66 +1,118 @@
 var assert = require('chai').assert
 var event = require('../')
+window.env = 'test'
 
 document.querySelector('body').innerHTML = '<div id="test"></div>'
 var testEl = document.querySelector('#test')
 
-describe('DomReady', function(){
-  before(function(){
+function reset() {
+  event.off(document)
+  document.querySelector('body').innerHTML = '<div id="test"></div>'
+  called = false
+  return document.querySelector('#test')
+}
+
+describe('Events', function(){
+
+  var called = false
+
+  it('should trigger document ready function', function(done){
     event.ready(function(){ testEl.textContent = "Document Ready Fired" })
-  })
-  it('Document ready function works', function(){
+
     event.fire(document, 'DOMContentLoaded')
     assert.equal(testEl.textContent, 'Document Ready Fired')
+    done()
   })
-})
-
-describe('Test regular event', function(){
-  before(function(){
+  
+  it('should fire event', function(done){
+    // Standard event listener
     event.on(document, 'test', '#test', function() {
       testEl.textContent = 'regular event'
     })
-  })
 
-  it('Test regular event', function(){
     event.fire(testEl, 'test')
     assert.equal(testEl.textContent, 'regular event')
+    done()
   })
-})
-
-describe('Test event removal', function(){
-  before(function(){
-    var called = false
-
-    event.on(document, 'test', '#test', function() {
+  
+  it('should fire event once', function(done){
+    // Single event listener
+    event.one(testEl, 'testonce', function() {
       if(!called) {
-        testEl.textContent = 'called event'
+        testEl.textContent = 'called once'
       } else {
-        testEl.textContent = 'called event again'
+        testEl.textContent = 'called twice'
       }
       called = true
     })
+
+    event.fire(testEl, 'testonce')
+    assert.equal(testEl.textContent, 'called once')
+    event.fire(testEl, 'testonce')
+    assert.equal(testEl.textContent, 'called once')
+    called = false
+    done()
   })
 
-  it('Test regular event', function(){
-    event.fire(testEl, 'test')
-    event.off(testEl,  'test')
-    event.fire(testEl, 'test')
-    assert.equal(testEl.textContent, 'called event')
-  })
-})
+  it('should fire object event', function(done){
+    // Object event listener
+    event.on(document, {
+      testobject: function() { testEl.textContent = 'object event' }
+    })
 
-// PhantomJS doesn't do animation events, but this should pass because
-// no support for animation events means that it will fire them immediately
-describe('Test animation event', function(){
-  before(function(){
+    event.fire(document, 'testobject')
+    assert.equal(testEl.textContent, 'object event')
+    done()
+  })
+
+  it('should fire and remove an event', function(done){
+    event.on(testEl, 'testoff', function() {
+      if(!called) {
+        testEl.textContent = 'called once'
+      } else {
+        testEl.textContent = 'called twice'
+      }
+      called = true
+    })
+
+    event.fire(testEl, 'testoff')
+    assert.equal(testEl.textContent, 'called once')
+
+    event.off(testEl,  'testoff')
+    event.fire(testEl, 'testoff')
+    assert.equal(testEl.textContent, 'called once')
+    called = false
+    done()
+  })
+
+
+  it('should fire an animation event', function(done){
     event.on(document, 'animationend', '#test', function() {
       testEl.textContent = 'animation end'
     })
+
+    // This event isnt being triggered because Phantomjs does not
+    // support animation events, therefore the event is triggered
+    // immediately
+    //
+    assert.equal(testEl.textContent, 'animation end')
+    done()
   })
 
-  it('Test regular event', function(){
-    event.fire(testEl, 'animationend')
-    assert.equal(testEl.textContent, 'animation end')
+  it('should fire an animation event once', function(done){
+    event.one(document, 'animationstart', '#test', function() {
+      if(!called) {
+        testEl.textContent = 'animation called once'
+      } else {
+        testEl.textContent = 'animation called twice'
+      }
+      called = true
+    })
+
+    assert.equal(testEl.textContent, 'animation called once')
+    event.fire(testEl, 'animationstart')
+    assert.equal(testEl.textContent, 'animation called once')
+    called = false
+    done()
   })
 })
-

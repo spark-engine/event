@@ -2,6 +2,7 @@ var bean = require('bean')
 var key = require('keymaster')
 var animationEvent = require('./lib/animation-events.js')
 var page = require('./lib/page-events.js')
+var slice = Array.prototype.slice
 
 module.exports = {
   on: on,
@@ -9,24 +10,35 @@ module.exports = {
   one: one,
   fire: bean.fire,
   clone: bean.clone,
+  ready: page.ready,
+  change: page.change,
   key: key,
   onKey: key,
   offKey: key.unbind,
-  oneKey: oneKey,
-  ready: page.ready,
-  change: page.change
+  oneKey: oneKey
 }
 
-function on (element, events, selector, fn) {
-  setEvent('on', element, events, selector, fn)
+function on () {
+  var args = transformArgs(slice.call(arguments))
+  if(args) {
+    bean.on.apply(null, args)
+  }
 }
 
-function off (element, events, selector, fn) {
-  setEvent('off', element, events, selector, fn)
+function off () {
+  var args = transformArgs(slice.call(arguments))
+
+  if(args) {
+    bean.off.apply(null, args)
+  }
 }
 
-function one (element, events, selector, fn) {
-  setEvent('one', element, events, selector, fn)
+function one () {
+  var args = transformArgs(slice.call(arguments))
+
+  if(args) {
+    bean.one.apply(null, args)
+  }
 }
 
 function oneKey (keys, scope, fn) {
@@ -41,12 +53,34 @@ function oneKey (keys, scope, fn) {
   })
 }
 
-function setEvent(type, element, events, selector, fn) {
+// Ensure
+function transformArgs(args) {
+  var newEvents = {}
+  var events = args[1]
 
-  // Add prefixes as necessary to animation events
-  events = transformAnimationEvents(events, fn || selector)
+  // Bean can accept events like { click: function(){},... }
+  // This ensures that the keys are transformed to support
+  // cross browser animation events.
+  //
+  if (typeof events == 'object') {
+    for (type in events) {
+      if (events.hasOwnProperty(type)) {
 
-  bean[type](element, events, selector, fn)
+        // Adds vendor prefixes or calls function if browser doesn't support animation events
+        transformed = transformAnimationEvents(type, events[type])
+
+        if (transformed.length > 0) {
+          newEvents[transformed] = events[type]
+        }
+      }
+    }
+    args[1] = newEvents
+  } else {
+    args[1] = transformAnimationEvents(events, args[3] || args[2])
+  }
+
+  if (!isEmpty(args[1])) return args
+
 }
 
 // Browser support: As necessary add vendor prefixes or camelCased event names
@@ -59,7 +93,9 @@ function transformAnimationEvents (events, fn) {
 
       if(!animationEvent.supported) { 
 
-        console.error('Animation events are not supported')
+        if(window.env != 'test') {
+          console.error('Animation events are not supported')
+        }
 
         // If animation events aren't supported trigger immediately
         fn()
@@ -76,6 +112,20 @@ function transformAnimationEvents (events, fn) {
       eventTypes.push(e)
     }
   })
-  
+
   return eventTypes.join(' ')
+  
+}
+
+function isEmpty(obj) {
+  var hasOwnProperty = Object.prototype.hasOwnProperty
+
+  if (obj == null || obj.length === 0) return true
+  if (0 < obj.length) return false
+
+  for (var key in obj) {
+    if (hasOwnProperty.call(obj, key)) return false
+  }
+
+  return true;
 }
