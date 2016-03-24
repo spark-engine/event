@@ -91,10 +91,7 @@ describe('Events', function(){
       testEl.textContent = 'animation end'
     })
 
-    // This event isnt being triggered because Phantomjs does not
-    // support animation events, therefore the event is triggered
-    // immediately
-    //
+    event.fire(testEl, 'animationend')
     assert.equal(testEl.textContent, 'animation end')
     done()
   })
@@ -109,6 +106,7 @@ describe('Events', function(){
       called = true
     })
 
+    event.fire(testEl, 'animationstart')
     assert.equal(testEl.textContent, 'animation called once')
     event.fire(testEl, 'animationstart')
     assert.equal(testEl.textContent, 'animation called once')

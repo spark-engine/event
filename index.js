@@ -9,7 +9,7 @@ module.exports = {
   on: on,
   off: off,
   one: one,
-  fire: bean.fire,
+  fire: fire,
   clone: bean.clone,
   ready: page.ready,
   change: page.change,
@@ -35,14 +35,46 @@ function one () {
   setEvent('one', slice.call(arguments))
 }
 
-function setEvent(type, args) {
+function fire () {
+  args = slice.call(arguments)
+  var el = args[0]
+  var events = []
+
+  args[1].split(' ').forEach(function(event) {
+    var event = animationEvent.transform(event)
+    if (!isEmpty(event)) events.push(event)
+  })
+
+  if (!isEmpty(events)) {
+    bean.fire(args[0], events.join(' '))
+  }
+}
+
+function setEvent(registerType, args) {
+  var fn = bean[registerType]
   // Process animation events for browser-support
   args = transformArgs(args)
+  var events = args[1]
 
-  // If no events remain (Because of no browser support)
-  // do not register events
-  if( !isEmpty(args[1]) ) {
-    bean[type].apply(null, args)
+  for (event in events) {
+    fn.apply(this, [args[0], events[event], args[2]])
+  }
+}
+
+function setEvent(registerType, args) {
+  // Process animation events for browser-support
+  args = transformArgs(args)
+  var events = args.pop()
+
+  for (event in events) {
+    var beanArgs = args
+    // Add event listener type as second parameter
+    beanArgs.splice(1, 0, event)
+
+    // Add event callback as last parameter
+    beanArgs.push(events[event])
+
+    bean[registerType].apply(null, beanArgs)
   }
 }
 
@@ -60,58 +92,76 @@ function oneKey (keys, scope, fn) {
   })
 }
 
+function getFunction(args) {
+  if (typeof args[3] == 'function') {
+    return args[3]
+  } else if (typeof args[2] == 'function'){
+    return args[2]
+  }
+  return null
+}
+
+function getDelegateSelector(args) {
+  if (typeof args[2] == 'string') {
+    return args[2]
+  }
+}
+
 // Transform event arguments to handle tap event and cross-browser animation events
 //
 function transformArgs(args) {
   var newEvents = {}
+  var newArgs = [args[0]]
   var events = args[1]
+  var delegate = getDelegateSelector(args)
 
-  // Bean can accept events like { click: function(){},... }
-  // This ensures that the keys are transformed to support
-  // cross browser animation events.
-  //
-  if (typeof events == 'object') {
-    for (type in events) {
-      if (events.hasOwnProperty(type)) {
-        var callback = events[type]
+  if (delegate) newArgs.push(delegate)
 
-        // Adds vendor prefixes or calls function if browser doesn't support animation events
-        //
-        var transformed = animationEvent.transform(type, callback)
-
-        // Walk through each event and if it should be a tap event
-        // replace the callback with a tap wrapped callback
-        //
-        if (transformed.match(/tap/)) {
-          var remainingEvents = []
-
-          transformed.split(' ').forEach(function(e){
-            if (e.match(/tap/, '')) {
-              // Direcly add the event as a tap event
-              newEvents.touchstart = tap(callback)
-            } else { 
-              remainingEvents.push(e)
-            }
-          })
-          transformed = remainingEvents.join(' ')
-        }
-
-        if (0 < transformed.length) {
-          newEvents[transformed] = callback
-        }
-      }
-    }
-
-    args[1] = newEvents
-
-  } else {
-
-    // If events are just a string, replace animation events with with browser supported ones
-    //
-    args[1] = animationEvent.transform(events, args[3] || args[2])
+  // convert event strings to object based events for code simplification
+  // example: arguments ('hover focus', function) would become ({ 'hover focus': function })
+  if (typeof events == 'string') {
+    var objEvents = {}
+    objEvents[events] = getFunction(args)
+    events = objEvents
   }
 
-  return args
+  // Walk through each key in the events object and add vendor prefixes to 'animation' events
+  // and wrap callback in the tap function for all 'tap' events.
+  //
+  for (event in events) {
+    if (events.hasOwnProperty(event)) {
+      var callback = events[event]
+
+      // Events can be registered as space separated groups like "hover focus"
+      // This handles each event independantly
+      //
+      event.split(' ').forEach(function(e){
+
+        // If it is an animation event, vendor prefix it, or fire the callback according to browser support
+        e = animationEvent.transform(e)
+
+        if (isEmpty(e)) {
+          // If it's empty, it has been removed since animation events are not supported.
+          // In that case, trigger the event immediately
+          callback()
+
+        } else if (e.match(/tap/)) {
+
+          // If it's a tap event, wrap the callback and set the event to 'touchstart'
+          // Tap isn't a real native event, but this wrapper lets us simulate what a
+          // native tap event would be.
+          //
+          newEvents['touchstart'] = tap(callback)
+        } else {
+          newEvents[e] = callback
+        }
+      })
+    }
+  }
+
+  newArgs.push(newEvents)
+
+  return newArgs
 }
 
 
