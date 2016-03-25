@@ -14,7 +14,7 @@ to register your functions.
 - <a href="#ready">event.<code>ready()</code></a>
 - <a href="#change">event.<code>change()</code></a>
 
-For standard DOM or keyboard events use these.
+For DOM and keyboard events use these.
 
 - <a href="#on">event.<code>on()</code></a>
 - <a href="#one">event.<code>one()</code></a>
@@ -24,8 +24,7 @@ For standard DOM or keyboard events use these.
 - <a href="#keyon">event.<code>keyOn()</code></a>
 - <a href="#keyoff">event.<code>keyOff()</code></a>
 - <a href="#keyOne">event.<code>keyOne()</code></a>
-
-To access
+- <a href="#key">event.<code>key</code></a>
 
 Much of the documentation below has been copied from dependent libraries and modified where necessary. To dig deeper be sure to reference
 the documentation for [bean](https://github.com/fat/bean) and [keymaster](https://github.com/madrobby/keymaster).
