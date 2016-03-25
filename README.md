@@ -29,6 +29,31 @@ For DOM and keyboard events use these.
 Much of the documentation below has been copied from dependent libraries and modified where necessary. To dig deeper be sure to reference
 the documentation for [bean](https://github.com/fat/bean) and [keymaster](https://github.com/madrobby/keymaster).
 
+<a name="ready"></a>
+### ready(function)
+<code>event.ready()</code> lets you add callbacks to be fired whenever the browser's `DOMContentLoaded` event is fired. For a site which
+uses ajax to fetch subsequent pages, it's important to note that this is only fired once with each full page load.
+
+This adds callbacks to an array and fires them each from a single event listener. It's this simple.
+
+```js
+event.ready(function(){ alert('Go to town!') })
+```
+
+This will also fire events registered with the change function below, unless you are using Turbolinks (as it handles that for you).
+
+<a name="change"></a>
+### change(function)
+<code>event.change()</code> lets you add callbacks to be fired whenever a `page:chage` event is fired. This is the sort
+of even that is used in pjax or Turbolinks to signal that the DOM has loaded new content, likely via ajax which means you
+may need to remove listeners, bootstrap widgets, or whatever you do when content changes.
+
+Just like `ready`, this adds your callback to an array, fired from a single listener.
+
+```js
+event.change(function(){ alert('Go to town!') })
+```
+
 <a name="on"></a>
 ### on(element, eventType[, selector], handler[, args ])
 <code>bean.on()</code> lets you attach event listeners to both elements and objects.
