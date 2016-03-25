@@ -29,7 +29,7 @@ describe('Events', function(){
 
   it('should fire event with arguments', function(done){
     // Standard event listener
-    event.on(document, 'testarg', '#test', function(event, scope, val) {
+    event.on(document, 'testarg', '#test', function(event, val) {
       testEl.textContent = 'regular event + ' + val
     }, 'argument')
 

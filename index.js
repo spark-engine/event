@@ -51,35 +51,9 @@ function fire () {
 }
 
 function setEvent(registerType, args) {
-  var fn = bean[registerType]
-  // Process animation events for browser-support
-  args = transformArgs(args)
-  var events = args.splice(1, 1)
-
-  for (event in events) {
-    args.splice(1, 0, events[event])
-    fn.apply(this, args)
-  }
-}
-
-function getFunctionIndex(array) {
-  array.forEach(function(el, i) {
-    if (typeof el == 'function') return i
+  transformArgs(args).forEach(function(arg) {
+    bean[registerType].apply(null, arg)
   })
-}
-
-function setEvent(registerType, args) {
-  // Process animation events for browser-support
-  args = transformArgs(args)
-  var events = args.splice(1, 1)[0]
-
-  for (event in events) {
-    var beanArgs = args
-    // Add event listener type and callback function
-    beanArgs.splice(1, 0, event, events[event])
-
-    bean[registerType].apply(null, beanArgs)
-  }
 }
 
 // Add support for unbinding a key event after it is called
@@ -97,10 +71,12 @@ function keyOne (keys, scope, fn) {
 }
 
 // Transform event arguments to handle tap event and cross-browser animation events
+// Returns an array of events to be registered individually
 //
 function transformArgs(args) {
+  var transformedArgs = []
   var newEvents = {}
-  var newArgs = [args.shift()] // retrieve element
+  var element = args.shift() // retrieve element
   var events = args.shift()
 
   // detect event delegate selector
@@ -149,12 +125,16 @@ function transformArgs(args) {
       })
     }
   }
-  newArgs.push(newEvents)
-  if (delegate) {
-    newArgs.push(delegate)
+
+  for (event in newEvents) {
+    var a = []
+    a.push(element, event)
+    if (delegate) a.push(delegate)
+    a.push(newEvents[event])
+    transformedArgs.push(a.concat(args))
   }
 
-  return newArgs.concat(args)
+  return transformedArgs
 }
 
 

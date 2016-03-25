@@ -7,5 +7,21 @@ Usage is nearly identical to Bean's and Keymasters since this is intended to be 
 ```
 event = require('compose-event')
 
-event.on(element, 'click', handler)
+// simple
+event.on(element, 'click', handler);
+
+// optional arguments passed to handler
+event.on(element, 'click', function(e, o1, o2) {
+  console.log(o1, o2);
+}, optional, args);
+
+// multiple events
+event.on(element, 'keydown keyup', handler);
+
+// multiple handlers
+event.on(element, {
+  click: function (e) {},
+  mouseover: function (e) {},
+  'focus blur': function (e) {}
+});
 ```
