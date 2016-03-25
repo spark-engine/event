@@ -14,9 +14,9 @@ module.exports = {
   ready: page.ready,
   change: page.change,
   key: key,
-  onKey: key,
-  offKey: key.unbind,
-  oneKey: oneKey
+  keyOn: key,
+  keyOff: key.unbind,
+  keyOne: keyOne
 }
 
 // Bean doesn't account for cross-browser support on animation events
@@ -54,25 +54,29 @@ function setEvent(registerType, args) {
   var fn = bean[registerType]
   // Process animation events for browser-support
   args = transformArgs(args)
-  var events = args[1]
+  var events = args.splice(1, 1)
 
   for (event in events) {
-    fn.apply(this, [args[0], events[event], args[2]])
+    args.splice(1, 0, events[event])
+    fn.apply(this, args)
   }
+}
+
+function getFunctionIndex(array) {
+  array.forEach(function(el, i) {
+    if (typeof el == 'function') return i
+  })
 }
 
 function setEvent(registerType, args) {
   // Process animation events for browser-support
   args = transformArgs(args)
-  var events = args.pop()
+  var events = args.splice(1, 1)[0]
 
   for (event in events) {
     var beanArgs = args
-    // Add event listener type as second parameter
-    beanArgs.splice(1, 0, event)
-
-    // Add event callback as last parameter
-    beanArgs.push(events[event])
+    // Add event listener type and callback function
+    beanArgs.splice(1, 0, event, events[event])
 
     bean[registerType].apply(null, beanArgs)
   }
@@ -80,7 +84,7 @@ function setEvent(registerType, args) {
 
 // Add support for unbinding a key event after it is called
 //
-function oneKey (keys, scope, fn) {
+function keyOne (keys, scope, fn) {
   if (typeof scope == 'function') {
     fn = scope
     scope = 'all'
@@ -92,36 +96,23 @@ function oneKey (keys, scope, fn) {
   })
 }
 
-function getFunction(args) {
-  if (typeof args[3] == 'function') {
-    return args[3]
-  } else if (typeof args[2] == 'function'){
-    return args[2]
-  }
-  return null
-}
-
-function getDelegateSelector(args) {
-  if (typeof args[2] == 'string') {
-    return args[2]
-  }
-}
-
 // Transform event arguments to handle tap event and cross-browser animation events
 //
 function transformArgs(args) {
   var newEvents = {}
-  var newArgs = [args[0]]
-  var events = args[1]
-  var delegate = getDelegateSelector(args)
+  var newArgs = [args.shift()] // retrieve element
+  var events = args.shift()
 
-  if (delegate) newArgs.push(delegate)
-
+  // detect event delegate selector
+  if (typeof args[0] != 'function') {
+    var delegate = args.shift()
+  }
+  
   // convert event strings to object based events for code simplification
   // example: arguments ('hover focus', function) would become ({ 'hover focus': function })
   if (typeof events == 'string') {
     var objEvents = {}
-    objEvents[events] = getFunction(args)
+    objEvents[events] = args.shift()
     events = objEvents
   }
 
@@ -151,17 +142,19 @@ function transformArgs(args) {
           // Tap isn't a real native event, but this wrapper lets us simulate what a
           // native tap event would be.
           //
-          newEvents['touchstart'] = tap(callback)
+          newEvents.touchstart = tap(callback)
         } else {
           newEvents[e] = callback
         }
       })
     }
   }
-
   newArgs.push(newEvents)
+  if (delegate) {
+    newArgs.push(delegate)
+  }
 
-  return newArgs
+  return newArgs.concat(args)
 }
 
 

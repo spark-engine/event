@@ -34,6 +34,17 @@ describe('Events', function(){
     assert.equal(testEl.textContent, 'regular event')
     done()
   })
+
+  it('should fire event with arguments', function(done){
+    // Standard event listener
+    event.on(document, 'testarg', '#test', function(event, scope, val) {
+      testEl.textContent = 'regular event + ' + val
+    }, 'argument')
+
+    event.fire(testEl, 'testarg')
+    assert.equal(testEl.textContent, 'regular event + argument')
+    done()
+  })
   
   it('should fire event once', function(done){
     // Single event listener
