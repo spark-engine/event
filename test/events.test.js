@@ -5,15 +5,7 @@ window.env = 'test'
 document.querySelector('body').innerHTML = '<div id="test"></div>'
 var testEl = document.querySelector('#test')
 
-function reset() {
-  event.off(document)
-  document.querySelector('body').innerHTML = '<div id="test"></div>'
-  called = false
-  return document.querySelector('#test')
-}
-
 describe('Events', function(){
-
   var called = false
 
   it('should trigger document ready function', function(done){
@@ -96,7 +88,6 @@ describe('Events', function(){
     done()
   })
 
-
   it('should fire an animation event', function(done){
     event.on(document, 'animationend', '#test', function() {
       testEl.textContent = 'animation end'
@@ -104,24 +95,6 @@ describe('Events', function(){
 
     event.fire(testEl, 'animationend')
     assert.equal(testEl.textContent, 'animation end')
-    done()
-  })
-
-  it('should fire an animation event once', function(done){
-    event.one(document, 'animationstart', '#test', function() {
-      if(!called) {
-        testEl.textContent = 'animation called once'
-      } else {
-        testEl.textContent = 'animation called twice'
-      }
-      called = true
-    })
-
-    event.fire(testEl, 'animationstart')
-    assert.equal(testEl.textContent, 'animation called once')
-    event.fire(testEl, 'animationstart')
-    assert.equal(testEl.textContent, 'animation called once')
-    called = false
     done()
   })
 })
