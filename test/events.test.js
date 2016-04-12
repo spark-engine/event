@@ -68,6 +68,19 @@ describe('Events', function(){
     done()
   })
 
+  it('should fire object event with delegation and arguments', function(done){
+    var arg = 'test arg'
+
+    // Object event listener
+    event.on(document, {
+      testobjectargs: function(event, arg) { testEl.textContent = 'object event ' + arg }
+    },'#test', 'test arg')
+
+    event.fire(testEl, 'testobjectargs')
+    assert.equal(testEl.textContent, 'object event test arg')
+    done()
+  })
+
   it('should fire and remove an event', function(done){
     event.on(testEl, 'testoff', function() {
       if(!called) {
