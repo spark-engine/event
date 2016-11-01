@@ -1,10 +1,10 @@
 {
   "name": "compose-event",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Event management utility unifying microjs event frameworks",
   "main": "index.js",
   "scripts": {
-    "test": "mochify"
+    "test": "mochify --reporter spec"
   },
   "repository": {
     "type": "git",

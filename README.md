@@ -8,39 +8,52 @@ cross-browser animation events, and tap events (for touch screen devices).
 - Custom `tap` event for properly discerning touch events.
 - Simple keyboard events, powered by [keymaster](https://github.com/madrobby/keymaster).
 
-If you want to trigger events on DOM ready, or when a page changes, use these
-to register your functions.
+If you want to trigger events on DOM ready, when a page changes, or during a scroll or resize event, use these
+event managers to register your functions.
 
 - <a href="#ready">event.<code>ready()</code></a>
 - <a href="#change">event.<code>change()</code></a>
+- <a href="#scroll">event.<code>scroll()</code></a>
+- <a href="#resize">event.<code>resize()</code></a>
 
-For DOM and keyboard events use these.
+**DOM Listeners** - Use these functions to attach DOM event listeners.
 
 - <a href="#on">event.<code>on()</code></a>
 - <a href="#one">event.<code>one()</code></a>
 - <a href="#off">event.<code>off()</code></a>
 - <a href="#clone">event.<code>clone()</code></a>
 - <a href="#fire">event.<code>fire()</code></a>
+
+**Keyboard Listeners** - Use these functions to attach keyboard event listeners.
+
 - <a href="#keyon">event.<code>keyOn()</code></a>
 - <a href="#keyoff">event.<code>keyOff()</code></a>
 - <a href="#keyOne">event.<code>keyOne()</code></a>
 - <a href="#key">event.<code>key</code></a>
 
-Much of the documentation below has been copied from dependent libraries and modified where necessary. To dig deeper be sure to reference
-the documentation for [bean](https://github.com/fat/bean) and [keymaster](https://github.com/madrobby/keymaster).
+**Timing functions** - Control when functions are executed and how frequently.
+
+- <a href="#delay">event.<code>delay()</code></a>
+- <a href="#repeat">event.<code>repeat()</code></a>
+- <a href="#throttle">event.<code>throttle()</code></a>
+- <a href="#debounce">event.<code>debounce()</code></a>
+
+## Event managers
+
+These event managers make it easier to handle event listeners for DOM ready, page transitions, and window scroll. This triggeres event callbacks
+efficiently and adds some other niceities.
 
 <a name="ready"></a>
 ### ready(function)
 <code>event.ready()</code> lets you add callbacks to be fired whenever the browser's `DOMContentLoaded` event is fired. For a site which
 uses ajax to fetch subsequent pages, it's important to note that this is only fired once with each full page load.
 
-This adds callbacks to an array and fires them each from a single event listener. It's this simple.
-
 ```js
 event.ready(function(){ alert('Go to town!') })
 ```
 
-This will also fire events registered with the change function below, unless you are using Turbolinks (as it handles that for you).
+This adds callbacks to an array and fires them each from a single event listener. If an event callback is added after the page has already loaded, it will fire immediately.
+This will also fire events registered with the change function below, unless you are using Turbolinks which triggers `page:change` on its own.
 
 <a name="change"></a>
 ### change(function)
@@ -48,14 +61,45 @@ This will also fire events registered with the change function below, unless you
 of even that is used in pjax or Turbolinks to signal that the DOM has loaded new content, likely via ajax which means you
 may need to remove listeners, bootstrap widgets, or whatever you do when content changes.
 
-Just like `ready`, this adds your callback to an array, fired from a single listener.
-
 ```js
 event.change(function(){ alert('Go to town!') })
 ```
 
+Just like `ready`, this adds your callback to an array, fired from a single listener. If a function is added after `page:change` has been fired, it will fire immediately.
+
+<a name="scroll"></a>
+### scroll(function)
+<code>event.scroll()</code> lets you add callbacks to be fired whenever the `window`'s `scroll` event is fired (throttled by `requestAnimationFrame`). 
+
+```js
+event.scroll(function(){ alert('Go to town!') })
+```
+
+This fires all callbacks at with `requestAnimationFrame()` ensuring that events are fired during the 
+browser's natural repaint cycle (every 16ms at 60fps). This helps prevent scattered repaints and jittery graphics performance.
+
+This also fires a custom event, `optimizedScroll` in concert with scrolling and `requestAnimationFrame()`, if you'd rather manage your own optimized scroll listener.
+
+<a name="resize"></a>
+### resize( function  )
+<code>event.resize()</code> lets you add callbacks to be fired whenever the `window`'s `resize` event is fired (throttled by `requestAnimationFrame`). 
+
+```js
+event.resize( function(){ alert('Go to town!') } )
+```
+
+This fires all callbacks at with `requestAnimationFrame()` ensuring that events are fired during the 
+browser's natural repaint cycle (every 16ms at 60fps). This helps prevent scattered repaints and jittery graphics performance.
+
+This also fires a custom event, `optimizedResize` in concert with resizing and `requestAnimationFrame()`, if you'd rather manage your own optimized resize listener.
+
+## Event Listeners
+
+Much of the documentation below has been copied from dependent libraries and modified where necessary. To dig deeper be sure to reference
+the documentation for [bean](https://github.com/fat/bean) and [keymaster](https://github.com/madrobby/keymaster).
+
 <a name="on"></a>
-### on(element, eventType[, selector], handler[, args ])
+### on( element, eventType[, selector], handler[, args ] )
 <code>bean.on()</code> lets you attach event listeners to both elements and objects.
 
 **Arguments**
@@ -71,24 +115,24 @@ Optionally, event types and handlers can be passed in an object of the form `{ '
 **Examples**
 
 ```js
-event = require('compose-event')
+event = require( 'compose-event' )
 
 // simple
-event.on(element, 'click', handler);
+event.on( element, 'click', handler );
 
 // optional arguments passed to handler
-event.on(element, 'click', function(event, o1, o2) {
-  console.log(o1, o2);
-}, optional, args);
+event.on( element, 'click', function( event, option1, option2 ) {
+  console.log( option1, option2 );
+}, optional, args );
 
 // multiple events
-event.on(element, 'keydown keyup', handler);
+event.on( element, 'keydown keyup', handler );
 
 // multiple handlers
-event.on(element, {
-  click: function (e) {},
-  mouseover: function (e) {},
-  'focus blur': function (e) {}
+event.on( element, {
+  click:        function ( e ) {},
+  mouseover:    function ( e ) {},
+  'focus blur': function ( e ) {}
 });
 ```
 
@@ -96,13 +140,13 @@ event.on(element, {
 
 ```js
 // event delegated events
-event.on(element, 'click', '.content p', handler);
+event.on( element, 'click', '.content p', handler );
 
 // Alternatively, you can pass an array of elements.
 // This cuts down on selector engine work, and is a more performant means of
 // delegation if you know your DOM won't be changing:
-event.on(element, [el, el2, el3], 'click', handler);
-event.on(element, document.querySelectorAll('.myClass'), 'click', handler);
+event.on( element, [el, el2, el3], 'click', handler );
+event.on( element, document.querySelectorAll('.myClass'), 'click', handler );
 ```
 
 **Differences to Bean events**
@@ -113,17 +157,17 @@ arguments to allow these features without issue. Here's what that looks like.
 
 ```js
 // Multiple events + delegation + optional arguments
-event.on(element, {
-  click: function (e) {},
-  mouseover: function (e) {},
-  'focus blur': function (e) {}
+event.on( element, {
+  click:        function ( e ) {},
+  mouseover:    function ( e ) {},
+  'focus blur': function ( e ) {}
 }, '.content p', 'optional', 'argument');
 ```
 
 Another difference is that you can create a new 'tap' event which looks like this.
 
 ```js
-event.on(element, 'tap', function() {})
+event.on( element, 'tap', function() {} )
 ```
 
 This attaches a `touchstart` event and watches for movement or additional fingers, which would indicate a canceled or uninteneded tap. If a
@@ -133,12 +177,12 @@ user does not move their finger or add an additional finger, their intent is det
 a click event a part of the touch event lifecycle.
 
 <a name="one"></a>
-### one(element, eventType[, selector], handler[, args ])
+### one( element, eventType[, selector], handler[, args ] )
 <code>event.one()</code> is an alias for <code>event.on()</code> except that the handler will only be executed once and then the listener
 will be removed. If you use `one` for multiple events, the listener will be removed as each event is fired.
 
 <a name="off"></a>
-### off(element[, eventType[, handler ]])
+### off( element[, eventType[, handler ]] )
 <code>event.off()</code> is how you get rid of handlers once you no longer want them active. It's also a good idea to call *off* on elements before removing them from your DOM; this helps prevent memory leaks.
 
 **Arguments**
@@ -153,106 +197,122 @@ Optionally, event types and handlers can be passed in an object of the form `{ '
 
 ```js
 // remove a single event handlers
-event.off(element, 'click', handler);
+event.off( element, 'click', handler );
 
 // remove all click handlers
-event.off(element, 'click');
+event.off( element, 'click' );
 
 // remove handler for all events
-event.off(element, handler);
+event.off( element, handler );
 
 // remove multiple events
-event.off(element, 'mousedown mouseup');
+event.off( element, 'mousedown mouseup' );
 
 // remove all events
-event.off(element);
+event.off( element );
 
 // remove handlers for events using object literal
-event.off(element, { click: clickHandler, keyup: keyupHandler })
+event.off( element, { click: clickHandler, keyup: keyupHandler } )
 ```
 
 <a name="clone"></a>
-### clone(destElement, srcElement[, eventType ])
+### clone( destElement, srcElement[, eventType ] )
 <code>event.clone()</code> is a method for cloning events from one DOM element or object to another.
 
 **Examples**
 
 ```js
 // clone all events at once by doing this:
-event.clone(toElement, fromElement);
+event.clone( toElement, fromElement );
 
 // clone events of a specific type
-event.clone(toElement, fromElement, 'click');
+event.clone( toElement, fromElement, 'click' );
 ```
 
 --------------------------------------------------------
 <a name="fire"></a>
-### fire(element, eventType[, args ])
+### fire( element, eventType[, args ] )
 <code>event.fire()</code> gives you the ability to trigger events.
 
 **Examples**
 
 ```js
 // fire a single event on an element
-event.fire(element, 'click');
+event.fire( element, 'click' );
 
 // fire multiple types
-event.fire(element, 'mousedown mouseup');
+event.fire( element, 'mousedown mouseup' );
 ```
 
-## The `Event` object
+### The `Event` object
 
 Bean implements a variant of the standard DOM `Event` object, supplied as the argument to your DOM event handler functions. Bean wraps and *fixes* the native `Event` object where required, providing a consistent interface across browsers.
 
 ```js
 // prevent default behavior and propagation (even works on old IE)
-event.on(el, 'click', function (event) {
+event.on( el, 'click', function ( event ) {
   event.preventDefault();
   event.stopPropagation();
 });
 
 // a simple shortcut version of the above code
-event.on(el, 'click', function (event) {
+event.on( el, 'click', function ( event ) {
   event.stop();
 });
 
 // prevent all subsequent handlers from being triggered for this particular event
-event.on(el, 'click', function (event) {
+event.on( el, 'click', function ( event ) {
   event.stopImmediatePropagation();
 });
 ```
 
 **Note:** Your mileage with the `Event` methods (`preventDefault` etc.) may vary with delegated events as the events are not intercepted at the element in question.
 
-## object support
+### object support
 
 Everything you can do with an element, you can also do with an object. this is particularly useful for working with classes or plugins.
 
 ```js
 var inst = new klass();
-event.on(inst, 'complete', handler);
+event.on( inst, 'complete', handler );
 
 //later on...
-event.fire(inst, 'complete');
+event.fire( inst, 'complete' );
 ```
+
+## Bubbling up on form events
+
+By default, input `focus`, `blur`, and form `submit` events do not bubble up the DOM. You can add bubbling support for these events like this.
+
+```js
+event.bubbleFormEvents()
+```
+
+Here's what this does.
+
+1. On page change, event listeners for `focus`, `blur` and `submit` are added to input and form elements.
+2. When events are fired, a custom event (which will bubble up the DOM) is fired on the target's parent element, passing along the original event object.
+3. Ajax page changes remove and re-add event listeners automatically.
+
+This means you can attach a single listener to the `document` or a `form` and respond to these events wihtout having to manage a host of listeners.
 
 ## Keybaord events
 
 <a name="keyon"></a>
-### keyOn('key', handler)
+### keyOn( 'key', handler )
 <code>event.keyOn()</code> gives you the ability to trigger events from keypresses.
 
 **Examples**
 
 ```js
 // simple
-event.keyOn('a', function(){ alert('you pressed a!') });
+event.keyOn( 'a', function(){ alert( 'you pressed a!' ) } );
 
 // You can also chain modifier keys and stop events like this.
-event.keyOn('ctrl+r', function(){ alert('stopped reload!'); return false });
+event.keyOn( 'ctrl+r', function() { alert( 'stopped reload!' ); return false } );
 
 // multiple shortcuts that do the same thing
-event.keyOn('⌘+r, ctrl+r', function(){ });
+event.keyOn( '⌘+r, ctrl+r', function() { } );
 ```
 
 The handler method is called with two arguments set, the keydown `event` fired, and
@@ -262,8 +322,8 @@ an object containing, among others, the following two properties:
 `scope`: a string describing the scope (or `all`)
 
 ```js
-event.keyOn('⌘+r, ctrl+r', function(event, handler){
-  console.log(handler.shortcut, handler.scope);
+event.keyOn( '⌘+r, ctrl+r', function( event, handler ){
+  console.log( handler.shortcut, handler.scope );
 });
 
 // "ctrl+r", "all"
@@ -280,28 +340,28 @@ The following special keys can be used for shortcuts:
 and `f1` through `f19`.
 
 <a name="keyone"></a>
-### keyOne('key', handler)
+### keyOne( 'key', handler )
 <code>event.keyOne()</code> is an alias for `key()` but it fires once and removes its listener.
 
 This will execute the callback and stop listening for the escape key.
 
 ```js
 // simple
-event.keyOne('esc', function(){ alert('Escaping!') });
+event.keyOne( 'esc', function() { alert( 'Escaping!' ) } );
 ```
 
 <a name="keyoff"></a>
-### keyOff('key', handler)
+### keyOff( 'key', handler )
 <code>event.keyOff()</code> removes event listeners for keys.
 
 ```javascript
 // unbind 'a' handler
-key.unbind('a');
+key.unbind( 'a' );
 
 // unbind a key only for a single scope
 // when no scope is specified it defaults to the current scope (key.getScope())
-key.unbind('o, enter', 'issues');
-key.unbind('o, enter', 'files');
+key.unbind( 'o, enter', 'issues' );
+key.unbind( 'o, enter', 'files' );
 ```
 
 
@@ -318,16 +378,16 @@ You can query the `key` object for the state of any key at any point (even in co
 For example, `key.shift` is `true` if the shift key is currently pressed. This allows easy implementation of things like shift+click handlers.
 
 ```js
-if(event.key.shift) alert('shift is pressed, OMGZ!');
+if( event.key.shift ) alert( 'shift is pressed, OMGZ!' );
 ```
 
 **Other key Queries**
 
-`key.isPressed(77)` is `true` if the M key is currently pressed.
+`key.isPressed( 77 )` is `true` if the M key is currently pressed.
 
 ```js
-if(event.key.isPressed("M")) alert('M key is pressed, can ya believe it!?');
-if(event.key.isPressed(77)) alert('M key is pressed, can ya believe it!?');
+if( event.key.isPressed("M") ) alert( 'M key is pressed, can ya believe it!?' );
+if( event.key.isPressed(77) )  alert( 'M key is pressed, can ya believe it!?' );
 ```
 
 You can also get these as an array using...
@@ -342,9 +402,167 @@ Keymaster supports switching between scopes. Use the `key.setScope` method to se
 
 ```js
 // define shortcuts with a scope
-event.key('o, enter', 'issues', function(){ /* do something */ });
-event.key('o, enter', 'files', function(){ /* do something else */ });
+event.key( 'o, enter', 'issues', function() { /* do something */ } );
+event.key( 'o, enter', 'files', function() { /* do something else */ } );
 
 // set the scope (only 'all' and 'issues' shortcuts will be honored)
-event.key.setScope('issues'); // default scope is 'all'
+event.key.setScope( 'issues' ); // default scope is 'all'
 ```
+
+### Timing functions
+
+<a name="delay"></a>
+### delay( function, [wait, arguments] )
+<code>event.dealy()</code> lets you call functions after a period of time. Execution is queued with `requestAnimationFrame()` which ensures that callbacks
+are triggered optimally to prevent unnecessary repainting. If your callback doesn't change the DOM and you need to execute a function more precicely, use
+`setTimeout()` instead.
+
+
+Here we'll call `scat()` during the browser's repaint cycle immediately following 500ms.
+
+```js
+function scat() { console.log( 'skippity bop!' ) }
+event.delay( scat, 500 )
+```
+
+We can also pass arugments to the delayed function, and even stop it from being executed.
+
+```js
+var handle = event.delay( scat, 2500, some, args )
+
+// stop the delayed call
+handle.stop()
+```
+
+<a name="repeat"></a>
+### repeat( function, [wait, limit, arguments] )
+<code>event.repeat()</code> lets you call functions on a regular interval with `requestAnimationFrame()`, ensuring that callbacks
+are triggered optimally to prevent unnecessary repainting. If your callback doesn't change the DOM and you need to execute a function more precicely, use
+`setInterval()` instead. This adds a helpful `limit` option which stops repeating after a set number of times.
+
+Here we'll call `scat()` during the repaint cycle closest to 200ms.
+
+```js
+function scat() { console.log( 'skippity bop!' ) }
+event.repeat( scat, 200 )
+```
+
+This will call `scat()` 10 times, during the repaint cycle closest to 200ms.
+
+```js
+var handle = event.repeat( scat, 200, 10 )
+
+// Or you can manually stop the repeating
+handle.stop()
+```
+
+
+You can even execute a function after repeating stops.
+
+```js
+var handle = event.repeat( scat, 200, 10 )
+
+// Assign a function to trigger when the repeating stops.
+handle.complete = function() { console.log ( 'take a bow' ) }
+```
+
+This will trigger a callback with each repaint cycle.
+
+```js
+// These are all equivilent
+event.repeat( scat )
+event.repeat( scat, 0 )
+event.repeat( scat, 0, 0 )
+```
+
+You can also pass arguments to the callback function like this.
+
+```js
+event.repeat( scat, 200, 10, some, args )
+```
+
+<a name="throttle"></a>
+### throttle( function, [wait, options] )
+<code>event.throttle()</code> prevents functions from being called except on the repaint cycle after every `wait` miliseconds. This uses `requestAnimationFrame()` to prevent callbacks from triggering unnecessary repaints. If your callbacks will not affect the DOM and you need more assurance of their execution time, you'll want to use a different throttle function.
+
+```js
+var resizer = function() {
+  // modify the DOM
+}
+// Create a throttled version of the resize
+var throttledResize = throttle( resize, 200 )
+
+// Only executes on the repait cycle after every 200ms 
+event.on( window, 'resize', throttledResize )
+```
+
+To allow a callback to execute with every repaint cycle don't provide a wait time.
+
+```js
+var throttledResize = throttle( resize )
+```
+
+To stop a throttled callback from being executed:
+
+```js
+// Remove it from the animation queue and prevent it from executing
+throttledResize.stop()
+```
+
+Throttled functions pass arguments through to the original callback.
+
+```js
+var test = function ( event ) {
+  console.log( event.target )
+}
+
+event.on( window, 'scroll', throttle( test, 200 ) )
+```
+
+<a name="debounce"></a>
+### debounce( function, [wait, options] )
+<code>event.debounce()</code> prevents functions from being called except on the repaint cycle after every `wait` miliseconds since the last time the function was executed. This is similar to throttle, exept rather than executing on a regular interval, callbacks are only triggered `wait` miliseconds after the last time they were called.
+
+For example if you want to validate a form input after someone finishes typing, you'd do this.
+
+```js
+var validate = function( event ) { // some awesome code }
+
+event.on( someInput, 'keyup', debounce( validate, 200 ) )
+```
+
+This will wait 200ms after the last `keyup` event to trigger the script js. You'll notice that the
+validate function accepts the event argument, this is because arguments are passed through to the
+callback.
+
+
+#### option.leading & option.trailing
+
+- `trailing` - callbacks are only fired after `wait` miliseconds from the last call.
+- `leading` - callbacks are fired immediately after the first call, but not again unless it has been `wait` miliseconds from the last time the debounced callback was called.
+- `leading & trailing` - callbacks will be fired immediately, and then again `wait` miliseconds after
+the last call.
+
+```js
+var trailing = debounce( someFunc, 200 )
+var leading  = debounce( someFunc, 200, { leading: true, trailing: false })
+var both     = debounce( someFunc, 200, { leading: true })
+```
+
+For a simple example, lets consider what happens if a `click` event is fired once.
+
+- `trailing` - callback fires 200ms after the click.
+- `leading` - callback fires immediately.
+- both - callback fires immediately and then 200ms after the click.
+
+#### option.maxTime
+
+This option ensures that a function doesn't go too long without being executed.
+
+```js
+var debouncedFunc = debounce( someFunc, 200, { maxTime: 1000 } )
+```
+
+In the example above if the debounced function is called every 100ms, `someFunc` will never be
+executed. By setting `maxTime` to 1000ms, we ensure that `someFunc` will be called at least once a
+second.

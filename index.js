@@ -4,6 +4,11 @@ var animationEvent = require('./lib/animation-events.js')
 var page = require('./lib/page-events.js')
 var tap = require('./lib/tap-events.js')
 var slice = Array.prototype.slice
+var debounce = require( './lib/debounce' )
+var throttle = require( './lib/throttle' )
+var delay = require( './lib/delay' )
+var repeat = require( './lib/repeat' )
+var bubbleFormEvents = require( './lib/bubble-form-events' )
 
 module.exports = {
   on: on,
@@ -16,7 +21,17 @@ module.exports = {
   key: key,
   keyOn: key,
   keyOff: key.unbind,
-  keyOne: keyOne
+  keyOne: keyOne,
+  debounce: debounce,
+  throttle: throttle,
+  delay: delay,
+  repeat: repeat,
+  bubbleFormEvents: bubbleEvents
+}
+
+// Adds pseudo event-bubbling for form and input events
+function bubbleEvents () {
+  page.change( bubbleFormEvents )
 }
 
 // Bean doesn't account for cross-browser support on animation events
@@ -46,7 +61,8 @@ function fire () {
   })
 
   if (!isEmpty(events)) {
-    bean.fire(args[0], events.join(' '))
+    args[1] = events.join( ' ' )
+    bean.fire.apply( this, args )
   }
 }
 
