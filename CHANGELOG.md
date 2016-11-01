@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 1.1.1 (2016-11-01)
+
+- FIX: Ensured form bubbling wouldn't be added twice.
+
 ### 1.1.0 (2016-11-01)
 
 - NEW: timing functions, `delay` and `repeat`.

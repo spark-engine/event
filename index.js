@@ -1,14 +1,17 @@
-var bean = require('bean')
-var key = require('keymaster')
-var animationEvent = require('./lib/animation-events.js')
-var page = require('./lib/page-events.js')
-var tap = require('./lib/tap-events.js')
-var slice = Array.prototype.slice
-var debounce = require( './lib/debounce' )
-var throttle = require( './lib/throttle' )
-var delay = require( './lib/delay' )
-var repeat = require( './lib/repeat' )
-var bubbleFormEvents = require( './lib/bubble-form-events' )
+var bean = require( 'bean' )
+var key  = require( 'keymaster' )
+
+var animationEvent    = require( './lib/animation-events.js' )
+var page              = require( './lib/page-events.js' )
+var tap               = require( './lib/tap-events.js' )
+var debounce          = require( './lib/debounce' )
+var throttle          = require( './lib/throttle' )
+var delay             = require( './lib/delay' )
+var repeat            = require( './lib/repeat' )
+var bubbleFormEvents  = require( './lib/bubble-form-events' )
+
+var slice             = Array.prototype.slice
+var formBubbling      = false
 
 module.exports = {
   on: on,
@@ -26,11 +29,13 @@ module.exports = {
   throttle: throttle,
   delay: delay,
   repeat: repeat,
-  bubbleFormEvents: bubbleEvents
+  bubbleFormEvents: formEventBubbling
 }
 
 // Adds pseudo event-bubbling for form and input events
-function bubbleEvents () {
+function formEventBubbling () {
+  if ( formBubbling ) { return }
+  formBubbling = true
   page.change( bubbleFormEvents )
 }
 
