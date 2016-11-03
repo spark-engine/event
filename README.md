@@ -14,7 +14,11 @@ event managers to register your functions.
 - <a href="#ready">event.<code>ready()</code></a>
 - <a href="#change">event.<code>change()</code></a>
 - <a href="#scroll">event.<code>scroll()</code></a>
+- <a href="#scrollStart">event.<code>scroll()</code></a>
+- <a href="#scrollStop">event.<code>scroll()</code></a>
 - <a href="#resize">event.<code>resize()</code></a>
+- <a href="#resizeStart">event.<code>resize()</code></a>
+- <a href="#resizeStop">event.<code>resize()</code></a>
 
 **DOM Listeners** - Use these functions to attach DOM event listeners.
 
@@ -49,7 +53,7 @@ efficiently and adds some other niceities.
 uses ajax to fetch subsequent pages, it's important to note that this is only fired once with each full page load.
 
 ```js
-event.ready(function(){ alert('Go to town!') })
+event.ready( function(){ alert('Go to town!') } )
 ```
 
 This adds callbacks to an array and fires them each from a single event listener. If an event callback is added after the page has already loaded, it will fire immediately.
@@ -62,7 +66,7 @@ of even that is used in pjax or Turbolinks to signal that the DOM has loaded new
 may need to remove listeners, bootstrap widgets, or whatever you do when content changes.
 
 ```js
-event.change(function(){ alert('Go to town!') })
+event.change( function(){ alert('Go to town!') } )
 ```
 
 Just like `ready`, this adds your callback to an array, fired from a single listener. If a function is added after `page:change` has been fired, it will fire immediately.
@@ -72,26 +76,30 @@ Just like `ready`, this adds your callback to an array, fired from a single list
 <code>event.scroll()</code> lets you add callbacks to be fired whenever the `window`'s `scroll` event is fired (throttled by `requestAnimationFrame`). 
 
 ```js
-event.scroll(function(){ alert('Go to town!') })
+event.scroll( function(){ // scrolling is happening } )
+event.scrollStart( function(){ // scrolling just started } )
+event.scrollStop(  function(){ // scrolling just stopped } )
 ```
 
 This fires all callbacks at with `requestAnimationFrame()` ensuring that events are fired during the 
 browser's natural repaint cycle (every 16ms at 60fps). This helps prevent scattered repaints and jittery graphics performance.
 
-This also fires a custom event, `optimizedScroll` in concert with scrolling and `requestAnimationFrame()`, if you'd rather manage your own optimized scroll listener.
+This also fires a custom event, `optimizedScroll`, `scrollStart`, and `scrollStop` in concert with scrolling and `requestAnimationFrame()`, if you'd rather manage your own optimized scroll listener.
 
 <a name="resize"></a>
 ### resize( function  )
 <code>event.resize()</code> lets you add callbacks to be fired whenever the `window`'s `resize` event is fired (throttled by `requestAnimationFrame`). 
 
 ```js
-event.resize( function(){ alert('Go to town!') } )
+event.resize( function(){ // window is being resized } )
+event.resizeStart( function(){ // resizing just started } )
+event.resizeStop(  function(){ // resizing just stopped } )
 ```
 
 This fires all callbacks at with `requestAnimationFrame()` ensuring that events are fired during the 
 browser's natural repaint cycle (every 16ms at 60fps). This helps prevent scattered repaints and jittery graphics performance.
 
-This also fires a custom event, `optimizedResize` in concert with resizing and `requestAnimationFrame()`, if you'd rather manage your own optimized resize listener.
+This also fires a custom event, `optimizedResize`, `resizeStart`, and `resizeStop` in concert with resizing and `requestAnimationFrame()`, if you'd rather manage your own optimized resize listener.
 
 ## Event Listeners
 
@@ -535,34 +543,97 @@ This will wait 200ms after the last `keyup` event to trigger the script js. You'
 validate function accepts the event argument, this is because arguments are passed through to the
 callback.
 
-
-#### option.leading & option.trailing
-
-- `trailing` - callbacks are only fired after `wait` miliseconds from the last call.
-- `leading` - callbacks are fired immediately after the first call, but not again unless it has been `wait` miliseconds from the last time the debounced callback was called.
-- `leading & trailing` - callbacks will be fired immediately, and then again `wait` miliseconds after
-the last call.
+Debounce also accepts an object as the first parameter.
 
 ```js
-var trailing = debounce( someFunc, 200 )
-var leading  = debounce( someFunc, 200, { leading: true, trailing: false })
-var both     = debounce( someFunc, 200, { leading: true })
+debounce({
+  callback: [function],      // Default callback for leading and trailing
+  trailing: [bool/function], // bool: Execute trailing callback. function: callback for leading trigger
+  leading:  [bool/function], // bool: Execute leading callback. function: callback for leading trigger
+  wait:     150,             // Miliseconds to debounce callbacks
+  max:      1000,            // Maximum time to debounce callbacks before forcing a trigger
+})
 ```
 
-For a simple example, lets consider what happens if a `click` event is fired once.
-
-- `trailing` - callback fires 200ms after the click.
-- `leading` - callback fires immediately.
-- both - callback fires immediately and then 200ms after the click.
-
-#### option.maxTime
-
-This option ensures that a function doesn't go too long without being executed.
+These are equivilent ways to create a *trailing-only* debounced function.
 
 ```js
-var debouncedFunc = debounce( someFunc, 200, { maxTime: 1000 } )
+// Equivilent ways to create a trailing-only debounce.
+
+debounce( someFunc, 100 )
+debounce( { callback: someFunc, wait: 100 } )
+debounce( { trailing: someFunc }, 100 )
 ```
 
-In the example above if the debounced function is called every 100ms, `someFunc` will never be
-executed. By setting `maxTime` to 1000ms, we ensure that `someFunc` will be called at least once a
+These are equivilent ways to create a *leading-only* debounced function.
+
+```js
+debounce( someFunc, 100, { leading: true, trailing: false } )
+debounce( { leading: someFunc, trailing: false, wait: 100 } )
+debounce( { leading: someFunc, trailing: false }, 100 )
+```
+
+#### Understanding Leading & Trailing debounce callbacks
+
+As noted above, debounce fires callbacks `wait` miliseconds from the last call. This is called a `trailing` callback. This is the default, but you can also
+fire `leading` callbacks which fire immediately after the first call but not again until it has been `wait` miliseconds from the last callback call.
+
+Here's an example where debounce is leading and trailing and set to 150 miliseconds.
+
+```js
+// Track leading and trailing by enabling leading in the options
+
+var leadingAndTrailing = debounce( someFunc, 150, { leading: true })
+event.on( window, 'scroll', leadingAndTrailing )
+```
+
+Here is what it looks like when the debounced function is triggered. The `*` represents times a scroll has occured.
+
+```
+                             (150 ms after)           (150 ms after)
+----------------|------------------•------------|-------------•-------------
+scroll:         *** * *  *                      *** *        
+
+leading:        A                               A          
+trailing:                          Ω                          Ω 
+```
+
+To fire leading callbacks only, disable trailing in the options.
+
+```js
+var leadingOnly = debounce( someFunc, 150, { leading: true, trailing: false })
+```
+
+For a simple example, lets consider what happens if a `click` event is fired twice (a double click).
+
+- When `leading` the callback fires immediately.
+- When `trailing` the callback fires `wait` ms after the last click.
+- When both, the callback fires immediately and then `wait` ms after the last click.
+
+#### Different leading and trailing callbacks
+
+You can trigger different leading and trailing callbacks to mark the start and end of a barrage of debounced calls. For example, you might track the
+beginning and ending of a user scrolling.
+
+Note: To aid in clarity, you can pass an options block first (instead of a function) to the debounce function as demonstrated below.
+
+```js
+var watchScroll = debounce({
+  leading:  function() { // scrolling has begun },
+  trailing: function() { // scrolling has ended }
+}, 150)
+
+event.on( window, 'scroll', watchScroll )
+```
+
+#### Setting a maximum wait time
+
+Set the optional `max` value to prevent a function from going more than `max` miliseconds without being executed.
+
+```js
+var debouncedFunc = debounce( someFunc, 200, { max: 1000 } )
+```
+
+In the example above if the debounced function is called every `100ms`, `someFunc` will never be
+executed since the wait is set to `200ms`. By setting `max` to `1000ms`, we ensure that `someFunc` will be called at least once a
 second.
