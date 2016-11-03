@@ -9,6 +9,8 @@ var throttle          = require( './lib/throttle' )
 var delay             = require( './lib/delay' )
 var repeat            = require( './lib/repeat' )
 var bubbleFormEvents  = require( './lib/bubble-form-events' )
+var scroll            = require( './lib/scroll' )
+var resize            = require( './lib/resize' )
 
 var slice             = Array.prototype.slice
 var formBubbling      = false
