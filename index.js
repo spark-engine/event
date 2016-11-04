@@ -1,9 +1,9 @@
 var bean = require( 'bean' )
 var key  = require( 'keymaster' )
 
-var animationEvent    = require( './lib/animation-events.js' )
-var page              = require( './lib/page.js' )
-var tap               = require( './lib/tap-events.js' )
+var animationEvent    = require( './lib/animation-events' )
+var page              = require( './lib/page' )
+var tap               = require( './lib/tap-events' )
 var debounce          = require( './lib/debounce' )
 var throttle          = require( './lib/throttle' )
 var delay             = require( './lib/delay' )
@@ -36,13 +36,13 @@ module.exports = {
   // Timing utilities
   debounce: debounce,
   throttle: throttle,
-  delay: delay,
-  repeat: repeat,
+  delay:    delay,
+  repeat:   repeat,
 
   // Scroll Event Managers
   scroll:      scrollEvent.scroll,
   startScroll: scrollEvent.start,
-  stopScroll:  scrollEvent.stop
+  stopScroll:  scrollEvent.stop,
 
   // Resize Event Managers
   resize:      resizeEvent.resize,
