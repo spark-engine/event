@@ -43,6 +43,7 @@ module.exports = {
   scroll:      scrollEvent.scroll,
   startScroll: scrollEvent.startScroll,
   stopScroll:  scrollEvent.stopScroll,
+  pauseHoverOnScroll: scroll.pauseHoverOnScroll,
 
   // Resize Event Managers
   resize:      resizeEvent.resize,

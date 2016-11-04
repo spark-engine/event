@@ -14,11 +14,11 @@ event managers to register your functions.
 - <a href="#ready">event.<code>ready()</code></a>
 - <a href="#change">event.<code>change()</code></a>
 - <a href="#scroll">event.<code>scroll()</code></a>
-- <a href="#scrollStart">event.<code>scroll()</code></a>
-- <a href="#scrollStop">event.<code>scroll()</code></a>
+- <a href="#scrollStart">event.<code>scrollStart()</code></a>
+- <a href="#scrollStop">event.<code>scrollStop()</code></a>
 - <a href="#resize">event.<code>resize()</code></a>
-- <a href="#resizeStart">event.<code>resize()</code></a>
-- <a href="#resizeStop">event.<code>resize()</code></a>
+- <a href="#resizeStart">event.<code>resizeStart()</code></a>
+- <a href="#resizeStop">event.<code>resizeStop()</code></a>
 
 **DOM Listeners** - Use these functions to attach DOM event listeners.
 
@@ -42,13 +42,19 @@ event managers to register your functions.
 - <a href="#throttle">event.<code>throttle()</code></a>
 - <a href="#debounce">event.<code>debounce()</code></a>
 
+**Helpers** - These are tiny event utilities which make things a bit nicer.
+
+- <a href="#bubbleFormEvents">event.<code>bubbleFormEvents()</code></a>
+- <a href="#pauseHoverOnScroll">event.<code>pauseHoverOnScroll()</code></a>
+
+
 ## Event managers
 
 These event managers make it easier to handle event listeners for DOM ready, page transitions, and window scroll. This triggeres event callbacks
 efficiently and adds some other niceities.
 
 <a name="ready"></a>
-### ready(function)
+### ready( callback )
 <code>event.ready()</code> lets you add callbacks to be fired whenever the browser's `DOMContentLoaded` event is fired. For a site which
 uses ajax to fetch subsequent pages, it's important to note that this is only fired once with each full page load.
 
@@ -60,7 +66,7 @@ This adds callbacks to an array and fires them each from a single event listener
 This will also fire events registered with the change function below, unless you are using Turbolinks which triggers `page:change` on its own.
 
 <a name="change"></a>
-### change(function)
+### change( callback )
 <code>event.change()</code> lets you add callbacks to be fired whenever a `page:chage` event is fired. This is the sort
 of even that is used in pjax or Turbolinks to signal that the DOM has loaded new content, likely via ajax which means you
 may need to remove listeners, bootstrap widgets, or whatever you do when content changes.
@@ -72,7 +78,7 @@ event.change( function(){ /* do something */ } )
 Just like `ready`, this adds your callback to an array, fired from a single listener. If a function is added after `page:change` has been fired, it will fire immediately.
 
 <a name="scroll"></a>
-### scroll(function)
+### scroll( callback )
 <code>event.scroll()</code> lets you add callbacks to be fired whenever the `window`'s `scroll` event is fired (throttled by `requestAnimationFrame`). 
 
 ```js
@@ -308,22 +314,6 @@ event.on( inst, 'complete', handler );
 //later on...
 event.fire( inst, 'complete' );
 ```
-
-## Bubbling up on form events
-
-By default, input `focus`, `blur`, and form `submit` events do not bubble up the DOM. You can add bubbling support for these events like this.
-
-```js
-event.bubbleFormEvents()
-```
-
-Here's what this does.
-
-1. On page change, event listeners for `focus`, `blur` and `submit` are added to input and form elements.
-2. When events are fired, a custom event (which will bubble up the DOM) is fired on the target's parent element, passing along the original event object.
-3. Ajax page changes remove and re-add event listeners automatically.
-
-This means you can attach a single listener to the `document` or a `form` and respond to these events wihtout having to manage a host of listeners.
 
 ## Keybaord events
 
@@ -658,3 +648,35 @@ var debouncedFunc = debounce( someFunc, 200, { max: 1000 } )
 In the example above if the debounced function is called every `100ms`, `someFunc` will never be
 executed since the wait is set to `200ms`. By setting `max` to `1000ms`, we ensure that `someFunc` will be called at least once a
 second.
+
+
+<a name="bubbleFormEvents"></a>
+### bubbleFormEvents()
+
+By default, input `focus`, `blur`, and form `submit` events do not bubble up the DOM. You can add bubbling support for these events like this.
+
+```js
+event.bubbleFormEvents()
+```
+
+Here's what this does.
+
+1. On page change, event listeners for `focus`, `blur` and `submit` are added to input and form elements.
+2. When events are fired, a custom event (which will bubble up the DOM) is fired on the target's parent element, passing along the original event object.
+3. Ajax page changes remove and re-add event listeners automatically.
+
+This means you can attach a single listener to the `document` or a `form` and respond to these events wihtout having to manage a host of listeners.
+
+<a name="puaseHoverOnScroll"></a>
+### pauseHoverOnScroll()
+
+While scrolling down a page, your pointer may interact with elements which pass under it. This may cause
+unnecessary repaints, causing a jittery scrolling experience. This little utility simply watches scroll
+events and disables pointer events while scrolling.
+
+```js
+event.pauseHoverOnScroll()
+```
+
+This registers itself with `scrollStart` and `scrollEnd` event managers to optimize event listener usage and
+offer the best performance possible.
