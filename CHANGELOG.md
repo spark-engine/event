@@ -5,7 +5,8 @@
 - NEW: Event managers (change, scroll, resize, etc) return callback references with the ability to
     disable/enable callback execution.
 - NEW: A new callback manager makes it easy to group and trigger callbacks.
-- NEW: `pauseHoverOnScroll` prevents jittery scrolling performance by disabling pointer events while scrolling.
+- NEW: `scroll.disablePointer` prevents jittery scrolling performance by disabling pointer events while scrolling.
+- NEW: `resize.disableAnimation` prevents jittery resizing performance by disabling animations and transitions events while resizing.
 
 ### 1.2.0 (2016-11-03)
 

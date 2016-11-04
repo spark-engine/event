@@ -45,7 +45,8 @@ event managers to register your functions.
 **Helpers** - These are tiny event utilities which make things a bit nicer.
 
 - <a href="#bubbleFormEvents">event.<code>bubbleFormEvents()</code></a>
-- <a href="#pauseHoverOnScroll">event.<code>pauseHoverOnScroll()</code></a>
+- <a href="#scroll.disablePointer">event.<code>scroll.disablePointer()</code></a>
+- <a href="#resize.disableAnimation">event.<code>resize.disableAnimation()</code></a>
 
 
 ## Event managers
@@ -667,16 +668,30 @@ Here's what this does.
 
 This means you can attach a single listener to the `document` or a `form` and respond to these events wihtout having to manage a host of listeners.
 
-<a name="puaseHoverOnScroll"></a>
-### pauseHoverOnScroll()
+<a name="scroll.disablePointer"></a>
+### scroll.disablePointer()
 
 While scrolling down a page, your pointer may interact with elements which pass under it. This may cause
 unnecessary repaints, causing a jittery scrolling experience. This little utility simply watches scroll
 events and disables pointer events while scrolling.
 
 ```js
-event.pauseHoverOnScroll()
+event.scroll.disablePointer()
 ```
 
 This registers itself with `scrollStart` and `scrollEnd` event managers to optimize event listener usage and
+offer the best performance possible.
+
+<a name="resize.disableAnimation"></a>
+### resize.disableAnimation()
+
+This prevents transitions and animations from being triggered when resizing the window, preventing
+unnecessary repaints, causing a jittery resize experience. This little utility simply watches resize
+events and disables pointer events while resizing.
+
+```js
+event.resize.disableAnimation()
+```
+
+This registers itself with `resizeStart` and `resizeEnd` event managers to optimize event listener usage and
 offer the best performance possible.

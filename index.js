@@ -2,7 +2,7 @@ var bean = require( 'bean' )
 var key  = require( 'keymaster' )
 
 var animationEvent    = require( './lib/animation-events.js' )
-var page              = require( './lib/page-events.js' )
+var page              = require( './lib/page.js' )
 var tap               = require( './lib/tap-events.js' )
 var debounce          = require( './lib/debounce' )
 var throttle          = require( './lib/throttle' )
@@ -41,26 +41,18 @@ module.exports = {
 
   // Scroll Event Managers
   scroll:      scrollEvent.scroll,
-  startScroll: scrollEvent.startScroll,
-  stopScroll:  scrollEvent.stopScroll,
-  pauseHoverOnScroll: scroll.pauseHoverOnScroll,
+  startScroll: scrollEvent.start,
+  stopScroll:  scrollEvent.stop
 
   // Resize Event Managers
   resize:      resizeEvent.resize,
-  startResize: resizeEvent.startResize,
-  stopResize:  resizeEvent.stopResize,
+  startResize: resizeEvent.start,
+  stopResize:  resizeEvent.stop,
 
   callbackManager: callbackManager,
 
   // Bubbling fix
-  bubbleFormEvents: formEventBubbling
-}
-
-// Adds pseudo event-bubbling for form and input events
-function formEventBubbling () {
-  if ( formBubbling ) { return }
-  formBubbling = true
-  page.change( bubbleFormEvents )
+  bubbleFormEvents: bubbleFormEvents
 }
 
 // Bean doesn't account for cross-browser support on animation events
