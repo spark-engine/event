@@ -1,21 +1,24 @@
 var bean = require( 'bean' )
 var key  = require( 'keymaster' )
 
-var animationEvent    = require( './lib/animation-events.js' )
-var page              = require( './lib/page-events.js' )
-var tap               = require( './lib/tap-events.js' )
+var animationEvent    = require( './lib/animation-events' )
+var page              = require( './lib/page' )
+var tap               = require( './lib/tap-events' )
 var debounce          = require( './lib/debounce' )
 var throttle          = require( './lib/throttle' )
 var delay             = require( './lib/delay' )
 var repeat            = require( './lib/repeat' )
 var bubbleFormEvents  = require( './lib/bubble-form-events' )
-var scroll            = require( './lib/scroll' )
-var resize            = require( './lib/resize' )
+var scrollEvent       = require( './lib/scroll' )
+var resizeEvent       = require( './lib/resize' )
+var callbackManager   = require( './lib/callback-manager' )
 
 var slice             = Array.prototype.slice
 var formBubbling      = false
 
 module.exports = {
+
+  // DOM events
   on: on,
   off: off,
   one: one,
@@ -23,22 +26,33 @@ module.exports = {
   clone: bean.clone,
   ready: page.ready,
   change: page.change,
+
+  // Keyboard events
   key: key,
   keyOn: key,
   keyOff: key.unbind,
   keyOne: keyOne,
+
+  // Timing utilities
   debounce: debounce,
   throttle: throttle,
-  delay: delay,
-  repeat: repeat,
-  bubbleFormEvents: formEventBubbling
-}
+  delay:    delay,
+  repeat:   repeat,
 
-// Adds pseudo event-bubbling for form and input events
-function formEventBubbling () {
-  if ( formBubbling ) { return }
-  formBubbling = true
-  page.change( bubbleFormEvents )
+  // Scroll Event Managers
+  scroll:      scrollEvent.scroll,
+  startScroll: scrollEvent.start,
+  stopScroll:  scrollEvent.stop,
+
+  // Resize Event Managers
+  resize:      resizeEvent.resize,
+  startResize: resizeEvent.start,
+  stopResize:  resizeEvent.stop,
+
+  callbackManager: callbackManager,
+
+  // Bubbling fix
+  bubbleFormEvents: bubbleFormEvents
 }
 
 // Bean doesn't account for cross-browser support on animation events
@@ -106,7 +120,7 @@ function transformArgs(args) {
   if (typeof args[0] != 'function') {
     var delegate = args.shift()
   }
-  
+
   // convert event strings to object based events for code simplification
   // example: arguments ('hover focus', function) would become ({ 'hover focus': function })
   if (typeof events == 'string') {
