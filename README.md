@@ -53,7 +53,7 @@ efficiently and adds some other niceities.
 uses ajax to fetch subsequent pages, it's important to note that this is only fired once with each full page load.
 
 ```js
-event.ready( function(){ alert('Go to town!') } )
+event.ready( function(){ /* do something */ } )
 ```
 
 This adds callbacks to an array and fires them each from a single event listener. If an event callback is added after the page has already loaded, it will fire immediately.
@@ -66,7 +66,7 @@ of even that is used in pjax or Turbolinks to signal that the DOM has loaded new
 may need to remove listeners, bootstrap widgets, or whatever you do when content changes.
 
 ```js
-event.change( function(){ alert('Go to town!') } )
+event.change( function(){ /* do something */ } )
 ```
 
 Just like `ready`, this adds your callback to an array, fired from a single listener. If a function is added after `page:change` has been fired, it will fire immediately.
@@ -76,9 +76,9 @@ Just like `ready`, this adds your callback to an array, fired from a single list
 <code>event.scroll()</code> lets you add callbacks to be fired whenever the `window`'s `scroll` event is fired (throttled by `requestAnimationFrame`). 
 
 ```js
-event.scroll( function(){ // scrolling is happening } )
-event.scrollStart( function(){ // scrolling just started } )
-event.scrollStop(  function(){ // scrolling just stopped } )
+event.scroll( function(){ /* scrolling is happening */ } )
+event.scrollStart( function(){ /* scrolling has started */ } )
+event.scrollStop( function(){ /* scrolling has stopped */ } )
 ```
 
 This fires all callbacks at with `requestAnimationFrame()` ensuring that events are fired during the 
@@ -86,20 +86,41 @@ browser's natural repaint cycle (every 16ms at 60fps). This helps prevent scatte
 
 This also fires a custom event, `optimizedScroll`, `scrollStart`, and `scrollStop` in concert with scrolling and `requestAnimationFrame()`, if you'd rather manage your own optimized scroll listener.
 
+#### Pause & Resume Callbacks
+
+You may want to deactivate a callback and later reactivate it. To do so, save a reference to
+the callback when registering it. Then call `stop()` or `start()` on the callback reference.
+
+```js
+var scrollWatch = event.scroll( function(){ /* scrolling is happening */ } )
+scrollWatch.stop()   // prevent callback from executing
+scrollWatch.start()  // allow callback to execute again
+```
+
 <a name="resize"></a>
 ### resize( function  )
 <code>event.resize()</code> lets you add callbacks to be fired whenever the `window`'s `resize` event is fired (throttled by `requestAnimationFrame`). 
 
 ```js
-event.resize( function(){ // window is being resized } )
-event.resizeStart( function(){ // resizing just started } )
-event.resizeStop(  function(){ // resizing just stopped } )
+event.resize( function(){ /* window is being resized */ } )
+event.resizeStart( function(){ /* resizing just started */ } )
+event.resizeStop( function(){ /* resizing just stopped */ } )
 ```
 
 This fires all callbacks at with `requestAnimationFrame()` ensuring that events are fired during the 
 browser's natural repaint cycle (every 16ms at 60fps). This helps prevent scattered repaints and jittery graphics performance.
 
 This also fires a custom event, `optimizedResize`, `resizeStart`, and `resizeStop` in concert with resizing and `requestAnimationFrame()`, if you'd rather manage your own optimized resize listener.
+
+#### Pause & Resume Callbacks
+
+Just like with the scroll event manager, you may want to deactivate a callback and later reactivate it. To do so, save a reference to the callback when registering it. Then call `stop()` or `start()` on the callback reference.
+
+```js
+var resizeWatch = event.scroll( function(){ /* resizing is happening */ } )
+resizeWatch.stop()   // prevent callback from executing
+resizeWatch.start()  // allow callback to execute again
+```
 
 ## Event Listeners
 
