@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 1.3.1 (2016-11-07)
+
+- FIX: Firing a callback manager on a non-existent type fails gracefully.
+
 ### 1.3.0 (2016-11-04)
 
 - NEW: Event managers (change, scroll, resize, etc) return callback references with the ability to
