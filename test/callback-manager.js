@@ -20,7 +20,7 @@ describe('callback-manager', function(){
   beforeEach(function() {
     $el.dataset.cb1 = 0
     $el.dataset.cb2 = 0
-    manager.removeAll()
+    manager.remove()
   })
 
   it('fires callbacks', function(){
@@ -30,23 +30,6 @@ describe('callback-manager', function(){
 
     manager.fire()
     assert.equal( $el.dataset.cb1, 2 )
-  })
-
-  it('fires grouped callbacks', function(){
-    var ha = manager.add( increment1, 'a' )
-    var hb = manager.add( increment2, 'b' )
-
-    manager.fire()
-    assert.equal( $el.dataset.cb1, 1 )
-    assert.equal( $el.dataset.cb2, 1 )
-
-    manager.fire( 'a' )
-    assert.equal( $el.dataset.cb1, 2 )
-    assert.equal( $el.dataset.cb2, 1 )
-
-    manager.fire( 'b' )
-    assert.equal( $el.dataset.cb1, 2 )
-    assert.equal( $el.dataset.cb2, 2 )
   })
 
   it('stops and starts a callback', function(){
@@ -66,4 +49,34 @@ describe('callback-manager', function(){
     assert.equal( $el.dataset.cb1, 2 ) // callback works
   })
 
+  it('fires callbacks with arguments', function(){
+    var h = manager.add( function() {
+      $el.dataset[ arguments[ 0 ] ] = arguments[ 1 ]
+    })
+    manager.fire('cb1', 'test')
+    assert.equal( $el.dataset.cb1, 'test' )
+
+    manager.fire('cb2', 'test2')
+    assert.equal( $el.dataset.cb2, 'test2' )
+  })
+
+  it( 'handles simple callback pausing and resuming', function() {
+    var cb = function() {
+      $el.dataset[ arguments[ 0 ] ] = arguments[ 1 ]
+    }
+
+    cb = event.callback.new( cb )
+
+    cb( 'cb1', 'awesome' )
+    assert.equal( $el.dataset.cb1, 'awesome' )
+
+    cb.stop()
+    cb( 'cb1', 'cool' )
+    assert.equal( $el.dataset.cb1, 'awesome' )
+
+    cb.start()
+    cb( 'cb1', 'cool' )
+    assert.equal( $el.dataset.cb1, 'cool' )
+
+  })
 })
