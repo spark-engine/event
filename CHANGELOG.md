@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 1.4.1 (2016-11-08)
+
+- FIX: Fixed refactor artifacts
+
 ### 1.4.0 (2016-11-08)
 
 - NEW: Now you can create your own stop/startable callbacks with `fn = event.callback.new( fn )`. Then fn.stop()/fn.start()
