@@ -1,5 +1,8 @@
 # CHANGELOG
 
+### 1.4.2 (2016-11-08)
+- FIX: Restored `resize.disableAnimation()` feature.
+
 ### 1.4.1 (2016-11-08)
 
 - FIX: Fixed refactor artifacts
