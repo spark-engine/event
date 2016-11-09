@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 1.4.0 (2016-11-08)
+
+- NEW: Now you can create your own stop/startable callbacks with `fn = event.callback.new( fn )`. Then fn.stop()/fn.start()
+
 ### 1.3.1 (2016-11-07)
 
 - FIX: Firing a callback manager on a non-existent type fails gracefully.
