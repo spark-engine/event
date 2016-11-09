@@ -1,6 +1,11 @@
 # CHANGELOG
 
+### 1.5.0 (2016-11-09)
+
+- NEW: Added `toggle( [bool] )` function to callbacks and callback managers.
+
 ### 1.4.2 (2016-11-08)
+
 - FIX: Restored `resize.disableAnimation()` feature.
 
 ### 1.4.1 (2016-11-08)

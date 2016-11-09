@@ -23,44 +23,7 @@ describe('callback-manager', function(){
     manager.remove()
   })
 
-  it('fires callbacks', function(){
-    var h = manager.add( increment1 )
-    manager.fire()
-    assert.equal( $el.dataset.cb1, 1 )
-
-    manager.fire()
-    assert.equal( $el.dataset.cb1, 2 )
-  })
-
-  it('stops and starts a callback', function(){
-    var h = manager.add( increment1 )
-
-    manager.fire()
-    assert.equal( $el.dataset.cb1, 1 )
-
-    h.stop()        // stop callback execution
-    manager.fire()  // should be ineffective
-    manager.fire()  // should be ineffective
-
-    assert.equal( $el.dataset.cb1, 1 ) // no change
-
-    h.start()       // enable callback execution
-    manager.fire()
-    assert.equal( $el.dataset.cb1, 2 ) // callback works
-  })
-
-  it('fires callbacks with arguments', function(){
-    var h = manager.add( function() {
-      $el.dataset[ arguments[ 0 ] ] = arguments[ 1 ]
-    })
-    manager.fire('cb1', 'test')
-    assert.equal( $el.dataset.cb1, 'test' )
-
-    manager.fire('cb2', 'test2')
-    assert.equal( $el.dataset.cb2, 'test2' )
-  })
-
-  it( 'handles simple callback pausing and resuming', function() {
+  it( 'pauses and resumes callbacks', function() {
     var cb = function() {
       $el.dataset[ arguments[ 0 ] ] = arguments[ 1 ]
     }
@@ -79,4 +42,64 @@ describe('callback-manager', function(){
     assert.equal( $el.dataset.cb1, 'cool' )
 
   })
+
+  it( 'toggles callbacks', function() {
+
+    var cb = event.callback.new( function() {
+      $el.dataset.cb1 = arguments[ 0 ]
+    })
+
+    assert.isTrue( cb.enabled )
+
+    cb.toggle()
+    assert.isFalse( cb.enabled )
+
+    cb.toggle()
+    assert.isTrue( cb.enabled )
+
+    cb.toggle( false )
+    assert.isFalse( cb.enabled )
+
+    cb.toggle( true )
+    assert.isTrue( cb.enabled )
+
+  })
+
+  it('fires manager callbacks', function(){
+    var h = manager.add( increment1 )
+    manager.fire()
+    assert.equal( $el.dataset.cb1, 1 )
+
+    manager.fire()
+    assert.equal( $el.dataset.cb1, 2 )
+  })
+
+  it("stops and starts a manager's callback", function(){
+    var h = manager.add( increment1 )
+
+    manager.fire()
+    assert.equal( $el.dataset.cb1, 1 )
+
+    h.stop()        // stop callback execution
+    manager.fire()  // should be ineffective
+    manager.fire()  // should be ineffective
+
+    assert.equal( $el.dataset.cb1, 1 ) // no change
+
+    h.start()       // enable callback execution
+    manager.fire()
+    assert.equal( $el.dataset.cb1, 2 ) // callback works
+  })
+
+  it('fires manager callbacks with arguments', function(){
+    var h = manager.add( function() {
+      $el.dataset[ arguments[ 0 ] ] = arguments[ 1 ]
+    })
+    manager.fire('cb1', 'test')
+    assert.equal( $el.dataset.cb1, 'test' )
+
+    manager.fire('cb2', 'test2')
+    assert.equal( $el.dataset.cb2, 'test2' )
+  })
+
 })
