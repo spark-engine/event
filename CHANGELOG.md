@@ -2,7 +2,8 @@
 
 ### 1.6.0 (2016-11-10)
 
-- FIX: Now scroll and resize event managers should always fire stop callbacks.
+- NEW: Easily register media query events, `event.media.width`, `event.media.minWidth`, etc.
+- FIX: Scroll and resize event managers should always fire stop callbacks.
 - CHANGE: Event Manager access has changed for resize and scroll: 
   - event.resizeStart -> event.resize.start
   - event.resizeStop  -> event.resize.stop

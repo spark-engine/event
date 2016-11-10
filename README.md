@@ -31,6 +31,15 @@ event managers to register your functions.
 - <a href="#keyOne">event.<code>keyOne()</code></a>
 - <a href="#key">event.<code>key</code></a>
 
+**Media Query Listeners** - trigger callbacks when media queries become true/untrue.
+
+- <a href="#width">event.<code>media.width()</code></a>
+- <a href="#minwidth">event.<code>media.minWidth()</code></a>
+- <a href="#maxwidth">event.<code>media.maxWidth()</code></a>
+- <a href="#height">event.<code>media.height()</code></a>
+- <a href="#minheight">event.<code>media.minHeight()</code></a>
+- <a href="#maxheight">event.<code>media.maxHeight()</code></a>
+
 **Timing functions** - Control when functions are executed and how frequently.
 
 - <a href="#delay">event.<code>delay()</code></a>
@@ -425,7 +434,69 @@ event.key( 'o, enter', 'files', function() { /* do something else */ } );
 event.key.setScope( 'issues' ); // default scope is 'all'
 ```
 
-### Timing functions
+## Media Query Listeners
+
+<a name="width"></a>
+### media.width( sizes, [callback] )
+<code>event.media.width()</code> Check a `width` media query and register a callback to be triggered when that media query becomes true/untrue.
+
+```js
+function handleQuery( query ) {
+  if ( query.matches ) { /* query is true */ }
+  else                 { /* query is true */ }
+}
+
+// Triggler handler when viewport width is between 400px and 800px
+queryList = event.media.width( { min: 400, max: 800 }, handleQuery )
+```
+
+<a name="minwidth"></a>
+### media.minWidth( size, [callback] )
+<code>event.media.minWidth()</code> Check a `min-width` media query and register a callback to be triggered when that media query becomes true/untrue.
+
+```js
+// Triggler handler when viewport width is greater than 400px
+queryList = event.media.minWidth( 400, handleQuery )
+```
+
+<a name="maxwidth"></a>
+### media.maxWidth( size, [callback] )
+<code>event.media.maxWidth()</code> Check a `min-width` media query and register a callback to be triggered when that media query becomes true/untrue.
+
+```js
+// Triggler handler when viewport width is less than 800px
+queryList = event.media.maxWidth( 800, handleQuery )
+```
+
+<a name="height"></a>
+### media.height( sizes, [callback] )
+<code>event.media.height()</code> Check a `height` media query and register a callback to be triggered when that media query becomes true/untrue.
+
+```js
+// Triggler handler when viewport height is between than 400px and 800px
+queryList = event.media.height( { min: 400, max: 800 }, handleQuery )
+```
+
+
+<a name="minheight"></a>
+### media.minHeight( size, [callback] )
+<code>event.media.minHeight()</code> Check a `min-height` media query and register a callback to be triggered when that media query becomes true/untrue.
+
+```js
+// Triggler handler when viewport height is greater than 400px
+queryList = event.media.minHeight( 400, handleQuery )
+```
+
+<a name="maxheight"></a>
+### media.maxHeight( size, [callback] )
+<code>event.media.maxHeight()</code> Check a `max-height` media query and register a callback to be triggered when that media query becomes true/untrue.
+
+```js
+// Triggler handler when viewport height is less than 800px
+queryList = event.media.maxHeight( 800, handleQuery )
+```
+
+## Timing functions
 
 <a name="delay"></a>
 ### delay( function, [wait, arguments] )
