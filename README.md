@@ -14,11 +14,7 @@ event managers to register your functions.
 - <a href="#ready">event.<code>ready()</code></a>
 - <a href="#change">event.<code>change()</code></a>
 - <a href="#scroll">event.<code>scroll()</code></a>
-- <a href="#scrollStart">event.<code>scrollStart()</code></a>
-- <a href="#scrollStop">event.<code>scrollStop()</code></a>
 - <a href="#resize">event.<code>resize()</code></a>
-- <a href="#resizeStart">event.<code>resizeStart()</code></a>
-- <a href="#resizeStop">event.<code>resizeStop()</code></a>
 
 **DOM Listeners** - Use these functions to attach DOM event listeners.
 
@@ -84,8 +80,8 @@ Just like `ready`, this adds your callback to an array, fired from a single list
 
 ```js
 event.scroll( function(){ /* scrolling is happening */ } )
-event.scrollStart( function(){ /* scrolling has started */ } )
-event.scrollStop( function(){ /* scrolling has stopped */ } )
+event.scroll.start( function(){ /* scrolling has started */ } )
+event.scroll.stop( function(){ /* scrolling has stopped */ } )
 ```
 
 This fires all callbacks at with `requestAnimationFrame()` ensuring that events are fired during the 
@@ -110,8 +106,8 @@ scrollWatch.start()  // allow callback to execute again
 
 ```js
 event.resize( function(){ /* window is being resized */ } )
-event.resizeStart( function(){ /* resizing just started */ } )
-event.resizeStop( function(){ /* resizing just stopped */ } )
+event.resize.start( function(){ /* resizing just started */ } )
+event.resize.stop( function(){ /* resizing just stopped */ } )
 ```
 
 This fires all callbacks at with `requestAnimationFrame()` ensuring that events are fired during the 
@@ -679,7 +675,7 @@ events and disables pointer events while scrolling.
 event.scroll.disablePointer()
 ```
 
-This registers itself with `scrollStart` and `scrollEnd` event managers to optimize event listener usage and
+This registers itself with `scroll.start` and `scroll.stop` event managers to optimize event listener usage and
 offer the best performance possible.
 
 <a name="resize.disableAnimation"></a>
@@ -693,5 +689,5 @@ events and disables pointer events while resizing.
 event.resize.disableAnimation()
 ```
 
-This registers itself with `resizeStart` and `resizeEnd` event managers to optimize event listener usage and
+This registers itself with `resize.start` and `resize.stop` event managers to optimize event listener usage and
 offer the best performance possible.
