@@ -1,3 +1,5 @@
+require( './lib/shims/custom-event' )
+
 var bean = require( 'bean' )
 var key  = require( 'keymaster' )
 
