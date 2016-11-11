@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 1.6.2 (2016-11-11)
+
+- FIX: Event.ready now properly calls event.change on first load.
+
 ### 1.6.1 (2016-11-11)
 
 - FIX: Optimized scroll managers now return the correct object.
