@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 1.6.3 (2016-11-11)
+
+- FIX: Form event bubbling now happens in the DOM using CustomEvents.
+
 ### 1.6.2 (2016-11-11)
 
 - FIX: Event.ready now properly calls event.change on first load.
