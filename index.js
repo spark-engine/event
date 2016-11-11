@@ -9,9 +9,10 @@ var throttle          = require( './lib/throttle' )
 var delay             = require( './lib/delay' )
 var repeat            = require( './lib/repeat' )
 var bubbleFormEvents  = require( './lib/bubble-form-events' )
-var scrollEvent       = require( './lib/scroll' )
-var resizeEvent       = require( './lib/resize' )
+var scroll            = require( './lib/scroll' )
+var resize            = require( './lib/resize' )
 var callbackManager   = require( './lib/callback-manager' )
+var media             = require( './lib/media' )
 
 var slice             = Array.prototype.slice
 var formBubbling      = false
@@ -27,6 +28,9 @@ module.exports = {
   ready: page.ready,
   change: page.change,
 
+  // Media query events
+  media: media,
+
   // Keyboard events
   key: key,
   keyOn: key,
@@ -39,15 +43,9 @@ module.exports = {
   delay:    delay,
   repeat:   repeat,
 
-  // Scroll Event Managers
-  scroll:      scrollEvent.scroll,
-  startScroll: scrollEvent.start,
-  stopScroll:  scrollEvent.stop,
-
-  // Resize Event Managers
-  resize:      resizeEvent.resize,
-  startResize: resizeEvent.start,
-  stopResize:  resizeEvent.stop,
+  // Optimized Event Managers
+  scroll:      scroll,
+  resize:      resize,
 
   callbackManager: callbackManager,
   callback: callbackManager.callback,
