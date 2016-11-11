@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 1.6.1 (2016-11-11)
+
+- FIX: Optimized scroll managers now return the correct object.
+
 ### 1.6.0 (2016-11-10)
 
 - NEW: Easily register media query events, `event.media.width`, `event.media.minWidth`, etc.
