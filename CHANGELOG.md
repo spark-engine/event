@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 1.6.4 (2016-11-14)
+
+- FIX: `preventDefault()` now works properly with form event bubbling.
+
 ### 1.6.3 (2016-11-11)
 
 - FIX: Form event bubbling now happens in the DOM using CustomEvents.
