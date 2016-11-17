@@ -23,6 +23,7 @@ event managers to register your functions.
 - <a href="#off">event.<code>off()</code></a>
 - <a href="#clone">event.<code>clone()</code></a>
 - <a href="#fire">event.<code>fire()</code></a>
+- <a href="#afteranimation">event.<code>afterAnimation()</code></a>
 
 **Keyboard Listeners** - Use these functions to attach keyboard event listeners.
 
@@ -320,6 +321,22 @@ event.on( inst, 'complete', handler );
 //later on...
 event.fire( inst, 'complete' );
 ```
+
+<a name="fire"></a>
+### afterAnimation( element, callback )
+<code>event.afterAnimation()</code> This will trigger a callback immediately if an element has no animation styles, otherwise it works just like `event.one( el, 'animationend', callback)` and
+triggers the callback once the animation completes.
+
+```js
+var el = document.querySelector( '#loose-canon' )
+el.classList.add( '.play-it-straight-or-turn-in-your-badge' )
+
+event.afterAnimation( el, function() {
+  // save the day
+})
+```
+
+After adding that absurd classname, if there are no animation styles the callback will be triggered immediately. If the element does animate, the callback will fire when the animation completes.
 
 ## Keybaord events
 

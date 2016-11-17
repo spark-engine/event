@@ -29,6 +29,7 @@ module.exports = {
   clone: bean.clone,
   ready: page.ready,
   change: page.change,
+  afterAnimation: afterAnimation,
 
   // Media query events
   media: media,
@@ -114,6 +115,15 @@ function keyOne ( keys, scope, fn ) {
     key.unbind( keys, scope )
     fn( event )
   })
+}
+
+function afterAnimation( el, callback ) {
+  var hasAnimation = !!window.getComputedStyle( el ).getPropertyValue( 'animation-duration' )
+  if ( hasAnimation ) {
+    one( el, 'animationend', callback )
+  } else {
+    callback()
+  }
 }
 
 // Transform event arguments to handle tap event and cross-browser animation events

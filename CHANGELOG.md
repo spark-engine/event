@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 1.7.0 (2016-11-17)
+
+- NEW: `event.afterAnimation( el, callback )` Triggers once `animationEnd` or immediately if element is not animated.
+
 ### 1.6.4 (2016-11-14)
 
 - FIX: `preventDefault()` now works properly with form event bubbling.
