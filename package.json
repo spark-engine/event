@@ -4,7 +4,8 @@
   "description": "Event management utility, unifying microjs event frameworks",
   "main": "index.js",
   "scripts": {
-    "test": "mochify --reporter spec"
+    "test": "mochify --reporter spec",
+    "debug": "mochify --debug --reporter spec"
   },
   "repository": {
     "type": "git",
@@ -24,11 +25,12 @@
     "test": "test"
   },
   "dependencies": {
-    "bean": "^1.0.14",
+    "bean": "compose-ui/bean#1.0.15",
     "keymaster": "^1.6.2"
   },
   "devDependencies" : {
     "chai": "^3.5.0",
-    "mochify": "^2.17.0"
+    "mochify": "^2.17.0",
+    "sinon": "1.17.7"
   }
 }

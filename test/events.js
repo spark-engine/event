@@ -1,5 +1,6 @@
 var assert = require('chai').assert
 var event = require('../')
+var sinon = require('sinon')
 window.env = 'test'
 
 document.querySelector('body').innerHTML = '<div id="test"></div>'
@@ -35,6 +36,51 @@ describe('Events', function(){
 
     event.fire(testEl, 'testarg')
     assert.equal(testEl.textContent, 'regular event + argument')
+    done()
+  })
+
+  it('should use capture if useCapture is true', function(done) {
+    var addEventListenerSpy = sinon.spy(document, 'addEventListener'),
+      mock = sinon.mock(),
+      usedCapture
+
+    event.on(document, 'click', '#test', mock, {useCapture: true})
+
+    usedCapture = addEventListenerSpy.getCall(0).args[2]
+    assert.isTrue(usedCapture)
+
+    event.off(document, 'click', mock, {useCapture: true});
+    document.addEventListener.restore()
+    done()
+  })
+
+  it('should not use capture if useCapture is false', function(done) {
+    var addEventListenerSpy = sinon.spy(document, 'addEventListener'),
+      mock = sinon.mock(),
+      usedCapture
+
+    event.on(document, 'click', '#test', mock, {useCapture: false})
+
+    usedCapture = addEventListenerSpy.getCall(0).args[2]
+    assert.isFalse(usedCapture)
+
+    event.off(document, 'click', mock);
+    document.addEventListener.restore()
+    done()
+  })
+
+  it('should not use capture if useCapture is unspecified', function(done) {
+    var addEventListenerSpy = sinon.spy(document, 'addEventListener'),
+      mock = sinon.mock(),
+      usedCapture
+
+    event.on(document, 'click', '#test', mock)
+
+    usedCapture = addEventListenerSpy.getCall(0).args[2]
+    assert.isFalse(usedCapture)
+
+    event.off(document, 'click', mock);
+    document.addEventListener.restore()
     done()
   })
   
