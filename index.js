@@ -1,8 +1,7 @@
 require( './lib/shims/custom-event' )
 
 var bean = require( 'bean' )
-var key  = require( 'keymaster' )
-
+var key  = require( 'keymaster' ) 
 var animationEvent    = require( './lib/animation-events' )
 var page              = require( './lib/page' )
 var tap               = require( './lib/tap-events' )
