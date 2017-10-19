@@ -116,10 +116,32 @@ function keyOne ( keys, scope, fn ) {
   })
 }
 
-function afterAnimation( el, callback ) {
+function afterAnimation( el, callback, checkStart ) {
   var hasAnimation = !!window.getComputedStyle( el ).getPropertyValue( 'animation-duration' )
+
   if ( hasAnimation ) {
-    one( el, 'animationend', callback )
+    
+    // If element is not animating after delay, fire callback
+    if ( checkStart ) {
+
+      var time = ((typeof checkStart == "number") ? checkStart : 20),
+          delayedEvent = delay( callback, time )
+
+      // Delay with requestAnimationFrame to fire callback only after 
+      // at least one animation frame has passed
+
+      one( el, 'animationstart', function(event) {
+        // cancel delayed fire
+        delayedEvent.stop()
+
+        // watch for animation to finish
+        one( el, 'animationend', callback )
+      })
+
+
+    } else {
+      one( el, 'animationend', callback )
+    }
   } else {
     callback()
   }

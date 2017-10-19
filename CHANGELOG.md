@@ -1,5 +1,14 @@
 # CHANGELOG
 
+### 1.8.0 (2017-10-19)
+- NEW: `event.afterAnimation( el, callback, [true or number] )`
+  passing new third parameter (true, or a number) will wait 20ms or the number of ms passed to check if an animation has started.
+  If an animation has started, it will wait until the animationEnd event fires to fire the callback.
+  If an animation does not start before the wait time has elapsed, the callback is fired.
+  Note: Using setTimeout could trigger callback before the browser has had a chance to paint.
+        This uses requestAnimationFrame with `delay` so the number of `ms` passed will roughly accurate within one animation frame.
+- FIX: `Event.change` now triggers with `turbolinks:load` events as well as `page:change`.
+
 ### 1.7.0 (2016-11-17)
 
 - NEW: `event.afterAnimation( el, callback )` Triggers once `animationEnd` or immediately if element is not animated.
