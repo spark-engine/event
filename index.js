@@ -53,7 +53,9 @@ module.exports = {
   callback: callbackManager.callback,
 
   // Bubbling fix
-  bubbleFormEvents: bubbleFormEvents
+  bubbleFormEvents: bubbleFormEvents,
+
+  submit: submit
 }
 
 // Bean doesn't account for cross-browser support on animation events
@@ -91,6 +93,16 @@ function fire () {
     bean.fire.apply( this, args )
 
   }
+}
+
+// Manually trigger a cancelable form submit event.
+function submit( form ) {
+  var ev = new CustomEvent( 'submit', { bubbles: true, cancelable: true, detail: { triggered: true } } )
+
+  form.dispatchEvent( ev )
+
+  // Submit form unless event default is prevented
+  if ( !ev.defaultPrevented ) form.submit()
 }
 
 function setEvent( registerType, args ) {

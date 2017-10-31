@@ -53,6 +53,7 @@ event managers to register your functions.
 - <a href="#bubbleFormEvents">event.<code>bubbleFormEvents()</code></a>
 - <a href="#scroll.disablePointer">event.<code>scroll.disablePointer()</code></a>
 - <a href="#resize.disableAnimation">event.<code>resize.disableAnimation()</code></a>
+- <a href="#submit">event.<code>submit()</code></a>
 
 
 ## Event managers
@@ -323,9 +324,11 @@ event.fire( inst, 'complete' );
 ```
 
 <a name="fire"></a>
-### afterAnimation( element, callback )
-<code>event.afterAnimation()</code> This will trigger a callback immediately if an element has no animation styles, otherwise it works just like `event.one( el, 'animationend', callback)` and
-triggers the callback once the animation completes.
+### afterAnimation( element, callback, [startTimeout] )
+<code>event.afterAnimation()</code> This will trigger a callback immediately if an element has no animation styles, otherwise it works just like `event.one( el, 'animationend', callback)` and triggers the callback once the animation completes.
+
+If you pass an optional `startTimeout` argument, you can wait that many miliseconds for an `animationstart` event before watching for the
+`animationend` event. Passing `true` will wait the default time (`20ms`) after the next animation frame.
 
 ```js
 var el = document.querySelector( '#loose-canon' )
@@ -333,7 +336,7 @@ el.classList.add( '.play-it-straight-or-turn-in-your-badge' )
 
 event.afterAnimation( el, function() {
   // save the day
-})
+}, true)
 ```
 
 After adding that absurd classname, if there are no animation styles the callback will be triggered immediately. If the element does animate, the callback will fire when the animation completes.
@@ -778,4 +781,17 @@ event.resize.disableAnimation()
 ```
 
 This registers itself with `resize.start` and `resize.stop` event managers to optimize event listener usage and
-offer the best performance possible.
+
+<a name="submit"></a>
+### submit()
+
+Triggers a DOM bubbling, cancelable form submsision event.
+
+```js
+event.submit( formElement )
+```
+
+Event listeners watching `submit` on that form element will be able to do their work, or even `preventDefault()`.
+
+**Why?** Because `form.submit()` doesn't fire events which can trigger listeners or be canceled.
+**How?** This triggers a `CustomEvent` and if the event is not `defaultPrevented` it will then fire `form.submit()`.
