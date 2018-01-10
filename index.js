@@ -10,6 +10,7 @@ var throttle          = require( './lib/throttle' )
 var delay             = require( './lib/delay' )
 var repeat            = require( './lib/repeat' )
 var bubbleFormEvents  = require( './lib/bubble-form-events' )
+var submit            = require( './lib/submit' )
 var scroll            = require( './lib/scroll' )
 var resize            = require( './lib/resize' )
 var callbackManager   = require( './lib/callback-manager' )
@@ -93,16 +94,6 @@ function fire () {
     bean.fire.apply( this, args )
 
   }
-}
-
-// Manually trigger a cancelable form submit event.
-function submit( form ) {
-  var ev = new CustomEvent( 'submit', { bubbles: true, cancelable: true, detail: { triggered: true } } )
-
-  form.dispatchEvent( ev )
-
-  // Submit form unless event default is prevented
-  if ( !ev.defaultPrevented ) form.submit()
 }
 
 function setEvent( registerType, args ) {
