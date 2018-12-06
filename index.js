@@ -127,20 +127,27 @@ function afterAnimation( el, callback, checkStart ) {
     // If element is not animating after delay, fire callback
     if ( checkStart ) {
 
-      var time = ((typeof checkStart == "number") ? checkStart : 20),
-          delayedEvent = delay( callback, time )
+      // If animation hasn't started after checkstart (or 32 ms) fire callback
+      var time = ((typeof checkStart == "number") ? checkStart : 32)
+      var delayedEvent = delay( function() {
+        callback() // The cutoff time has been reached so fire callback
+
+        // Stop watching for animation to start
+        // Why? - If we don't remove the watcher and animation starts late
+        //      - a second callback will fire.
+        off( el, 'animationstart', watchEndEvent ) 
+      }, time )
+
 
       // Delay with requestAnimationFrame to fire callback only after 
       // at least one animation frame has passed
+      function watchEndEvent () {
+        delayedEvent.stop() // cancel delayed fire
+        one( el, 'animationend', callback ) // watch for animation to finish
+      }
 
-      one( el, 'animationstart', function(event) {
-        // cancel delayed fire
-        delayedEvent.stop()
-
-        // watch for animation to finish
-        one( el, 'animationend', callback )
-      })
-
+      // 
+      one( el, 'animationstart', watchEndEvent )
 
     } else {
       one( el, 'animationend', callback )
