@@ -325,10 +325,17 @@ event.fire( inst, 'complete' );
 
 <a name="fire"></a>
 ### afterAnimation( element, callback, [startTimeout] )
-<code>event.afterAnimation()</code> This will trigger a callback immediately if an element has no animation styles, otherwise it works just like `event.one( el, 'animationend', callback)` and triggers the callback once the animation completes.
+<code>event.afterAnimation()</code>, a better animation event queue.
 
-If you pass an optional `startTimeout` argument, you can wait that many miliseconds for an `animationstart` event before watching for the
-`animationend` event. Passing `true` will wait the default time (`20ms`) after the next animation frame.
+This will trigger a callback:
+
+- After animation completes, or
+- After a timeout if animation is delayed or never starts, or
+- Immediately if animation is not supported by the browser.
+
+This works like `event.one( el, 'animationend', callback)` but is safe to use on elements which may not have animations, or in browsers which may not support them.
+
+For example:
 
 ```js
 var el = document.querySelector( '#loose-canon' )
@@ -336,10 +343,11 @@ el.classList.add( '.play-it-straight-or-turn-in-your-badge' )
 
 event.afterAnimation( el, function() {
   // save the day
-}, true)
+}, 50)
 ```
 
-After adding that absurd classname, if there are no animation styles the callback will be triggered immediately. If the element does animate, the callback will fire when the animation completes.
+In the example above the optional `startTimeout` was set. This will trigger the callback if animation has not begun after `50` miliseconds.
+`startTimeout` can also be set to `true` which will wait for `32ms` about two animation frames before aborting and triggering the callback.
 
 ## Keybaord events
 

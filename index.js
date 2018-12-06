@@ -1,23 +1,23 @@
 require( './lib/shims/custom-event' )
 
-var bean = require( 'bean' )
-var key  = require( 'keymaster' ) 
-var animationEvent    = require( './lib/animation-events' )
-var page              = require( './lib/page' )
-var tap               = require( './lib/tap-events' )
-var debounce          = require( './lib/debounce' )
-var throttle          = require( './lib/throttle' )
-var delay             = require( './lib/delay' )
-var repeat            = require( './lib/repeat' )
-var bubbleFormEvents  = require( './lib/bubble-form-events' )
-var submit            = require( './lib/submit' )
-var scroll            = require( './lib/scroll' )
-var resize            = require( './lib/resize' )
-var callbackManager   = require( './lib/callback-manager' )
-var media             = require( './lib/media' )
+var bean = require( 'bean' ),
+    key  = require( 'keymaster' ),
+    animationEvent    = require( './lib/animation-events' ),
+    page              = require( './lib/page' ),
+    tap               = require( './lib/tap-events' ),
+    debounce          = require( './lib/debounce' ),
+    throttle          = require( './lib/throttle' ),
+    delay             = require( './lib/delay' ),
+    repeat            = require( './lib/repeat' ),
+    bubbleFormEvents  = require( './lib/bubble-form-events' ),
+    submit            = require( './lib/submit' ),
+    scroll            = require( './lib/scroll' ),
+    resize            = require( './lib/resize' ),
+    callbackManager   = require( './lib/callback-manager' ),
+    media             = require( './lib/media' ),
 
-var slice             = Array.prototype.slice
-var formBubbling      = false
+    slice             = Array.prototype.slice,
+    formBubbling      = false
 
 module.exports = {
 
@@ -29,7 +29,7 @@ module.exports = {
   clone: bean.clone,
   ready: page.ready,
   change: page.change,
-  afterAnimation: afterAnimation,
+  afterAnimation: animationEvent.after,
 
   // Media query events
   media: media,
@@ -117,44 +117,6 @@ function keyOne ( keys, scope, fn ) {
     key.unbind( keys, scope )
     fn( event )
   })
-}
-
-function afterAnimation( el, callback, checkStart ) {
-  var hasAnimation = !!window.getComputedStyle( el ).getPropertyValue( 'animation-duration' )
-
-  if ( hasAnimation ) {
-    
-    // If element is not animating after delay, fire callback
-    if ( checkStart ) {
-
-      // If animation hasn't started after checkstart (or 32 ms) fire callback
-      var time = ((typeof checkStart == "number") ? checkStart : 32)
-      var delayedEvent = delay( function() {
-        callback() // The cutoff time has been reached so fire callback
-
-        // Stop watching for animation to start
-        // Why? - If we don't remove the watcher and animation starts late
-        //      - a second callback will fire.
-        off( el, 'animationstart', watchEndEvent ) 
-      }, time )
-
-
-      // Delay with requestAnimationFrame to fire callback only after 
-      // at least one animation frame has passed
-      function watchEndEvent () {
-        delayedEvent.stop() // cancel delayed fire
-        one( el, 'animationend', callback ) // watch for animation to finish
-      }
-
-      // 
-      one( el, 'animationstart', watchEndEvent )
-
-    } else {
-      one( el, 'animationend', callback )
-    }
-  } else {
-    callback()
-  }
 }
 
 // Transform event arguments to handle tap event and cross-browser animation events
