@@ -3,6 +3,7 @@ require( './lib/shims/custom-event' )
 var bean = require( 'bean' ),
     key  = require( 'keymaster' ),
     animationEvent    = require( './lib/animation-events' ),
+    afterAnimation    = require( './lib/after-animation' ),
     page              = require( './lib/page' ),
     tap               = require( './lib/tap-events' ),
     debounce          = require( './lib/debounce' ),
@@ -17,7 +18,8 @@ var bean = require( 'bean' ),
     media             = require( './lib/media' ),
 
     slice             = Array.prototype.slice,
-    formBubbling      = false
+    formBubbling      = false,
+    watchAnimation    = true
 
 module.exports = {
 
@@ -29,7 +31,8 @@ module.exports = {
   clone: bean.clone,
   ready: page.ready,
   change: page.change,
-  afterAnimation: animationEvent.after,
+  afterAnimation: afterAnimation,
+  watchAnimation: watchAnimation,
 
   // Media query events
   media: media,
@@ -58,6 +61,10 @@ module.exports = {
 
   submit: submit
 }
+
+page.ready( function() {
+  if ( watchAnimation ) afterAnimation.watch()
+})
 
 // Bean doesn't account for cross-browser support on animation events
 // So rather than pass through events to bean, we process them to add
