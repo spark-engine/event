@@ -1,6 +1,6 @@
 {
   "name": "compose-event",
-  "version": "1.9.5",
+  "version": "1.9.6",
   "description": "Event management utility, unifying microjs event frameworks",
   "main": "index.js",
   "scripts": {
