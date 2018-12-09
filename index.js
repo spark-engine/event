@@ -104,7 +104,6 @@ function fire () {
 }
 
 function setEvent( registerType, args ) {
-
   transformArgs( args ).forEach( function( arg ) {
     bean[ registerType ].apply( null, arg )
   })
@@ -152,39 +151,37 @@ function transformArgs( args ) {
   // Walk through each key in the events object and add vendor prefixes to 'animation' events
   // and wrap callback in the tap function for all 'tap' events.
   //
-  for ( event in events ) {
 
-    if ( events.hasOwnProperty( event ) ) {
-      var callback = events[event]
+  Object.keys( events ).forEach( function( event ) {
+    var callback = events[event]
 
-      // Events can be registered as space separated groups like "hover focus"
-      // This handles each event independantly
-      //
-      event.split(' ').forEach( function( e ){
+    // Events can be registered as space separated groups like "hover focus"
+    // This handles each event independantly
+    //
+    event.split(' ').forEach( function( e ){
 
-        // If it is an animation event, vendor prefix it, or fire the callback according to browser support
-        e = animationEvent.transform( e )
+      // If it is an animation event, vendor prefix it, or fire the callback according to browser support
+      e = animationEvent.transform( e )
 
-        if ( isEmpty( e ) ) {
-          // If it's empty, it has been removed since animation events are not supported.
-          // In that case, trigger the event immediately
-          callback()
+      if ( isEmpty( e ) ) {
+        // If it's empty, it has been removed since animation events are not supported.
+        // In that case, trigger the event immediately
+        callback()
 
-        } else if ( e.match( /tap/ ) ) {
+      } else if ( e.match( /tap/ ) ) {
 
-          // If it's a tap event, wrap the callback and set the event to 'touchstart'
-          // Tap isn't a real native event, but this wrapper lets us simulate what a
-          // native tap event would be.
-          //
-          newEvents.touchstart = tap( callback )
-        } else {
-          newEvents[ e ] = callback
-        }
-      })
-    }
-  }
+        // If it's a tap event, wrap the callback and set the event to 'touchstart'
+        // Tap isn't a real native event, but this wrapper lets us simulate what a
+        // native tap event would be.
+        //
+        newEvents.touchstart = tap( callback )
+      } else {
+        newEvents[ e ] = callback
+      }
+    })
+  })
 
-  for ( event in newEvents ) {
+  Object.keys( newEvents ).forEach( function( event ) {
     var a = []
     a.push( element, event )
 
@@ -192,7 +189,7 @@ function transformArgs( args ) {
 
     a.push( newEvents[ event ] )
     transformedArgs.push( a.concat( args ) )
-  }
+  })
 
   return transformedArgs
 }
