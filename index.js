@@ -15,6 +15,7 @@ var bean = require( 'bean' ),
     scroll            = require( './lib/scroll' ),
     resize            = require( './lib/resize' ),
     callbackManager   = require( './lib/callback-manager' ),
+    eventManager      = require( './lib/event-manager' ),
     media             = require( './lib/media' ),
 
     slice             = Array.prototype.slice,
@@ -52,6 +53,7 @@ module.exports = {
   // Optimized Event Managers
   scroll:      scroll,
   resize:      resize,
+  eventManager: eventManager,
 
   callbackManager: callbackManager,
   callback: callbackManager.callback,

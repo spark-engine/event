@@ -92,13 +92,11 @@ Just like `ready`, this adds your callback to an array, fired from a single list
 ```js
 event.scroll( function(){ /* scrolling is happening */ } )
 event.scroll.start( function(){ /* scrolling has started */ } )
-event.scroll.stop( function(){ /* scrolling has stopped */ } )
+event.scroll.end( function(){ /* scrolling has ended */ } )
 ```
 
 This fires all callbacks at with `requestAnimationFrame()` ensuring that events are fired during the 
 browser's natural repaint cycle (every 16ms at 60fps). This helps prevent scattered repaints and jittery graphics performance.
-
-This also fires a custom event, `optimizedScroll`, `scrollStart`, and `scrollStop` in concert with scrolling and `requestAnimationFrame()`, if you'd rather manage your own optimized scroll listener.
 
 #### Pause & Resume Callbacks
 
@@ -118,13 +116,11 @@ scrollWatch.start()  // allow callback to execute again
 ```js
 event.resize( function(){ /* window is being resized */ } )
 event.resize.start( function(){ /* resizing just started */ } )
-event.resize.stop( function(){ /* resizing just stopped */ } )
+event.resize.end( function(){ /* resizing just ended */ } )
 ```
 
 This fires all callbacks at with `requestAnimationFrame()` ensuring that events are fired during the 
 browser's natural repaint cycle (every 16ms at 60fps). This helps prevent scattered repaints and jittery graphics performance.
-
-This also fires a custom event, `optimizedResize`, `resizeStart`, and `resizeStop` in concert with resizing and `requestAnimationFrame()`, if you'd rather manage your own optimized resize listener.
 
 #### Pause & Resume Callbacks
 
@@ -134,6 +130,24 @@ Just like with the scroll event manager, you may want to deactivate a callback a
 var resizeWatch = event.scroll( function(){ /* resizing is happening */ } )
 resizeWatch.stop()   // prevent callback from executing
 resizeWatch.start()  // allow callback to execute again
+```
+
+### Custom Event Managers
+
+You can use a custom event manager to fire `start`, `end` and `requestAnimationFrame` throttled events for any type of event. This can be simpler than managing throttling and debouncing manually.
+
+```js
+eventManager.new('event', [{ el: Selector or Element (default: window), delay: 150, throttle: true }])
+```
+
+For example, if you want to trigger callbacks when scrolling a panel
+
+```js
+panelScroll = event.eventManager.new('scroll', { el: '#some-panel' })
+
+panelScroll(function(){})       /* panel scrolling is happening */
+panelScroll.start(function(){}) /* panel scrolling has started */ 
+panelScroll.end(function(){})   /* panel scrolling has ended */
 ```
 
 ## Event Listeners

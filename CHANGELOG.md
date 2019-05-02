@@ -1,5 +1,8 @@
 # CHANGELOG
 
+### 1.10.0 (2019-05-02)
+- NEW: `event.eventManager` allows you to create event managers with `start`, `end` and throttled callbacks.
+
 ### 1.8.0 (2017-10-19)
 - NEW: `event.afterAnimation( el, callback, [true or number] )`
   passing new third parameter (true, or a number) will wait 20ms or the number of ms passed to check if an animation has started.
