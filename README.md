@@ -137,17 +137,17 @@ resizeWatch.start()  // allow callback to execute again
 You can use a custom event manager to fire `start`, `end` and `requestAnimationFrame` throttled events for any type of event. This can be simpler than managing throttling and debouncing manually.
 
 ```js
-eventManager.new('event', [{ el: Selector or Element (default: window), delay: 150, throttle: true }])
+eventManager.new('event', [{ target: Selector or Element (default: window), delay: 150, throttle: true }])
 ```
 
 For example, if you want to trigger callbacks when scrolling a panel
 
 ```js
-panelScroll = event.eventManager.new('scroll', { el: '#some-panel' })
+panelScroll = event.eventManager.new('scroll', { target: '#some-panel' })
 
-panelScroll(function(){})       /* panel scrolling is happening */
-panelScroll.start(function(){}) /* panel scrolling has started */ 
-panelScroll.end(function(){})   /* panel scrolling has ended */
+panelScroll.start(function(event){ /* panel scrolling has started */ })
+panelScroll(function(event){       /* panel scrolling is happening */ })       
+panelScroll.end(function(event){   /* panel scrolling has ended */ })   
 ```
 
 ## Event Listeners

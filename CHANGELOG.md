@@ -1,5 +1,10 @@
 # CHANGELOG
 
+### 1.11.0 (2019-05-03)
+- NEW: Event managers now accept `target` attribute to set a target other than `window`.
+- NEW: Event managers now pass the `event` as an argument to its callbacks.
+- FIX: Ensure that event manager `start` event fires first.
+
 ### 1.10.0 (2019-05-02)
 - NEW: `event.eventManager` allows you to create event managers with `start`, `end` and throttled callbacks.
 
