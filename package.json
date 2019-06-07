@@ -1,15 +1,14 @@
 {
-  "name": "compose-event",
+  "name": "@spark-engine/event",
   "version": "1.11.0",
   "description": "Event management utility, unifying microjs event frameworks",
   "main": "index.js",
   "scripts": {
-    "test": "mochify --reporter spec",
-    "debug": "mochify --debug --reporter spec"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/compose-ui/event.git"
+    "url": "git+ssh://git@github.com/spark-engine/event.git"
   },
   "keywords": [
     "events"
@@ -17,20 +16,18 @@
   "author": "Brandon Mathis",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/compose-ui/event/issues"
+    "url": "https://github.com/spark-engine/event/issues"
   },
-  "homepage": "https://github.com/compose-ui/event#readme",
+  "homepage": "https://github.com/spark-engine/event#readme",
   "directories": {
     "lib": "lib",
     "test": "test"
   },
   "dependencies": {
-    "bean": "compose-ui/bean#1.0.15",
+    "@spark-engine/bean": "^1.0.15",
     "keymaster": "^1.6.2"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "mochify": "^2.17.0",
-    "sinon": "1.17.7"
+    "jest": "^24.8.0"
   }
 }
