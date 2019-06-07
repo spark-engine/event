@@ -1,12 +1,15 @@
-# Compose Event
+# Spark Engine Event
 
 This is a unified events framework handling standard events, keyboard events,
-cross-browser animation events, and tap events (for touch screen devices).
+and tap events (for touch screen devices). It features:
 
 - Easy DOM event management, powered by [bean](https://github.com/fat/bean).
-- Cross-browser animation events.
 - Custom `tap` event for properly discerning touch events.
 - Simple keyboard events, powered by [keymaster](https://github.com/madrobby/keymaster).
+- Event managers for attaching listeners to dom `ready`, page `change`, window `resize` and `scroll`.
+- Callback manager for enabling, disabling and toggling the ability for callbacks to trigger.
+- Custom event mangaers for registering many callbacks with `start`, `stop`, and `toggle` capability.
+- Throttle and Debounce functions tied to request animation frame for better paint performance.
 
 If you want to trigger events on DOM ready, when a page changes, or during a scroll or resize event, use these
 event managers to register your functions.
@@ -137,13 +140,13 @@ resizeWatch.start()  // allow callback to execute again
 You can use a custom event manager to fire `start`, `end` and `requestAnimationFrame` throttled events for any type of event. This can be simpler than managing throttling and debouncing manually.
 
 ```js
-eventManager.new('event', [{ target: Selector or Element (default: window), delay: 150, throttle: true }])
+event.eventManager.new('event', [{ target: Selector or Element (default: window), delay: 150, throttle: true }])
 ```
 
 For example, if you want to trigger callbacks when scrolling a panel
 
 ```js
-panelScroll = event.eventManager.new('scroll', { target: '#some-panel' })
+var panelScroll = event.eventManager.new('scroll', { target: '#some-panel' })
 
 panelScroll.start(function(event){ /* panel scrolling has started */ })
 panelScroll(function(event){       /* panel scrolling is happening */ })       
@@ -172,7 +175,7 @@ Optionally, event types and handlers can be passed in an object of the form `{ '
 **Examples**
 
 ```js
-event = require( 'compose-event' )
+Var event = require( '@spark-engine/event' )
 
 // simple
 event.on( element, 'click', handler );
@@ -209,7 +212,7 @@ event.on( element, document.querySelectorAll('.myClass'), 'click', handler );
 **Differences to Bean events**
 
 Even though with Bean (the core of the events system) using an object to register multiple events at once means
-you cannot have cannot have delegation or optional arguments, compose-event processes
+you cannot have delegation or optional arguments, @spark-engine/event processes
 arguments to allow these features without issue. Here's what that looks like.
 
 ```js
