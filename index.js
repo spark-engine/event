@@ -1,21 +1,21 @@
-require( './lib/shims/custom-event' )
+require('./lib/shims/custom-event')
 
-var bean = require( '@spark-engine/bean' ),
-    key  = require( 'keymaster' ),
-    afterAnimation    = require( './lib/after-animation' ),
-    page              = require( './lib/page' ),
-    tap               = require( './lib/tap-events' ),
-    debounce          = require( './lib/debounce' ),
-    throttle          = require( './lib/throttle' ),
-    delay             = require( './lib/delay' ),
-    repeat            = require( './lib/repeat' ),
-    bubbleFormEvents  = require( './lib/bubble-form-events' ),
-    submit            = require( './lib/submit' ),
-    scroll            = require( './lib/scroll' ),
-    resize            = require( './lib/resize' ),
-    callbackManager   = require( './lib/callback-manager' ),
-    eventManager      = require( './lib/event-manager' ),
-    media             = require( './lib/media' ),
+var bean = require('@spark-engine/bean'),
+    key  = require('keymaster'),
+    afterAnimation    = require('./lib/after-animation'),
+    page              = require('./lib/page'),
+    tap               = require('./lib/tap-events'),
+    debounce          = require('./lib/debounce'),
+    throttle          = require('./lib/throttle'),
+    delay             = require('./lib/delay'),
+    repeat            = require('./lib/repeat'),
+    bubbleFormEvents  = require('./lib/bubble-form-events'),
+    submit            = require('./lib/submit'),
+    scroll            = require('./lib/scroll'),
+    resize            = require('./lib/resize'),
+    callbackManager   = require('./lib/callback-manager'),
+    eventManager      = require('./lib/event-manager'),
+    media             = require('./lib/media'),
 
     slice             = Array.prototype.slice,
     formBubbling      = false,
@@ -31,6 +31,9 @@ module.exports = {
   clone: bean.clone,
   ready: page.ready,
   change: page.change,
+  beforeVisit: page.beforeVisit,
+  beforeChange: page.beforeChange,
+  beforeUnload: page.beforeUnload,
   afterAnimation: afterAnimation,
   watchAnimation: watchAnimation,
 
@@ -63,21 +66,21 @@ module.exports = {
   submit: submit
 }
 
-page.ready( function() {
-  if ( watchAnimation ) afterAnimation.watch()
+page.ready(function() {
+  if (watchAnimation) afterAnimation.watch()
 })
 
 // Add support for unbinding a key event after it is called
 //
-function keyOne ( keys, scope, fn ) {
+function keyOne (keys, scope, fn) {
 
-  if ( typeof scope == 'function' ) {
+  if (typeof scope == 'function') {
     fn = scope
     scope = 'all'
   }
 
-  key( keys, scope, function( event ) {
-    key.unbind( keys, scope )
-    fn( event )
+  key(keys, scope, function( event) {
+    key.unbind(keys, scope)
+    fn(event)
   })
 }

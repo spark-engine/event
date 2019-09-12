@@ -2,7 +2,6 @@ var Event = require("../")
 var manager = Event.callbackManager.new()
 var utils = require("./_utils")
 
-
 describe("callback-manager", function(){
   beforeEach(function() {
     manager.remove()
