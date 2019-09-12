@@ -1,6 +1,6 @@
 {
   "name": "@spark-engine/event",
-  "version": "1.12.0",
+  "version": "1.12.1",
   "description": "Event management utility, unifying microjs event frameworks",
   "main": "index.js",
   "scripts": {
