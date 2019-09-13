@@ -16,6 +16,9 @@ event managers to register your functions.
 
 - <a href="#ready">event.<code>ready()</code></a>
 - <a href="#change">event.<code>change()</code></a>
+- <a href="#beforeVisit">event.<code>beforeVisit()</code></a>
+- <a href="#beforeChange">event.<code>beforeChange()</code></a>
+- <a href="#beforeUnload">event.<code>beforeUnload()</code></a>
 - <a href="#scroll">event.<code>scroll()</code></a>
 - <a href="#resize">event.<code>resize()</code></a>
 
@@ -87,6 +90,21 @@ event.change( function(){ /* do something */ } )
 ```
 
 Just like `ready`, this adds your callback to an array, fired from a single listener. If a function is added after `page:change` has been fired, it will fire immediately.
+
+<a name="beforeVisit"></a>
+### beforeVisit( callback )
+<code>event.beforeVisit()</code> lets you add callbacks to be fired whenever a `page:-before-visit` or `turbolinks:before-visit` event is fired. This enables you
+to do work on a page between when an interaction triggers a new page load and when that page load request begins. If you are using Turbolinks you'll be able to
+interact with the `event` object to inspect things like `event.data.url` and know which page is being loaded.
+
+<a name="beforeUnload"></a>
+### beforeUnload( callback )
+<code>event.beforeUnload()</code> will trigger whenever you are about to leave the current page, calling `event.preventDefault()` will throw up the "leave this
+page?" modal dialog on supporting browsers.
+
+<a name="beforeChange"></a>
+### beforeChange( callback )
+<code>event.beforeChange()</code> triggers callbacks when the page is about to change, this is a generic rollup of `beforeunload`, `page:request-start` and `turbolinks:request-start`. In Turbolinks world, `request-start` is triggered for all page transition events which Turbolinks handles, including back navigation, which isn't covered by `before-visit`. Using `beforeChange` you can be sure your event triggers before a page is left.
 
 <a name="scroll"></a>
 ### scroll( callback )
