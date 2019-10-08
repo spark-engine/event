@@ -1,5 +1,8 @@
 # CHANGELOG
 
+### 1.12.3 (2019-10-08)
+- NEW: Event managers for beforeVisit, beforeUnload, beforeChange, and beforeRender supporting more Turbolinks events and window unload
+
 ### 1.11.0 (2019-05-03)
 - NEW: Event managers now accept `target` attribute to set a target other than `window`.
 - NEW: Event managers now pass the `event` as an argument to its callbacks.

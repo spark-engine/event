@@ -34,6 +34,7 @@ module.exports = {
   beforeVisit: page.beforeVisit,
   beforeChange: page.beforeChange,
   beforeUnload: page.beforeUnload,
+  beforeRender: page.beforeRender,
   afterAnimation: afterAnimation,
   watchAnimation: watchAnimation,
 
