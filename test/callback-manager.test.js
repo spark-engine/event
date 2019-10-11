@@ -1,6 +1,5 @@
 var Event = require("../")
 var manager = Event.callbackManager.new()
-var utils = require("./_utils")
 
 describe("callback-manager", function(){
   beforeEach(function() {
@@ -76,7 +75,7 @@ describe("callback-manager", function(){
 
   it("fires manager callbacks with arguments", function(){
     var mockFn = jest.fn()
-    var cb = manager.add( mockFn )
+    manager.add( mockFn )
 
     // Test the arguments passed to the Mock function
     manager.fire("a", "b")
