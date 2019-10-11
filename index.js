@@ -17,8 +17,6 @@ var bean = require('@spark-engine/bean'),
     eventManager      = require('./lib/event-manager'),
     media             = require('./lib/media'),
 
-    slice             = Array.prototype.slice,
-    formBubbling      = false,
     watchAnimation    = true
 
 module.exports = {
