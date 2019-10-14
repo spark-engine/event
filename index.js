@@ -3,6 +3,7 @@ require('./lib/shims/custom-event')
 var bean = require('@spark-engine/bean'),
     key  = require('keymaster'),
     afterAnimation    = require('./lib/after-animation'),
+    afterTransition   = require('./lib/after-transition'),
     page              = require('./lib/page'),
     tap               = require('./lib/tap-events'),
     debounce          = require('./lib/debounce'),
@@ -18,6 +19,13 @@ var bean = require('@spark-engine/bean'),
     media             = require('./lib/media'),
 
     watchAnimation    = true
+    watchAnimation    = true,
+    watchTransition   = true
+
+// Overriding key.filter to ignore key bindings in contenteditable fields
+key.filter = function(event){
+  return !(event.target.matches('input, select, textarea') || event.target.closest('[contenteditable=true]'))
+}
 
 module.exports = {
 
@@ -35,6 +43,8 @@ module.exports = {
   beforeRender: page.beforeRender,
   afterAnimation: afterAnimation,
   watchAnimation: watchAnimation,
+  afterTransition: afterTransition,
+  watchTransition: watchTransition,
 
   // Media query events
   media: media,
@@ -67,6 +77,7 @@ module.exports = {
 
 page.ready(function() {
   if (watchAnimation) afterAnimation.watch()
+  if (watchTransition) afterTransition.watch()
 })
 
 // Add support for unbinding a key event after it is called
