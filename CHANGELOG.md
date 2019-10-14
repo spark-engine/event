@@ -1,6 +1,6 @@
 # CHANGELOG
 
-### 1.12.4 (2019-10-09)
+### 1.13.0 (2019-10-09)
 - NEW: `event.afterTransition( el, callback, [true or number] )`
   Just like afterAnimation this will trigger after transitions end, or when the callback time limit is exceeded.
 - FIX: `event.key.filter` now filters events which happen in contentEditble elements as well as input, select, textarea.
