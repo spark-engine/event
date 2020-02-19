@@ -18,9 +18,8 @@ var bean = require('@spark-engine/bean'),
     eventManager      = require('./lib/event-manager'),
     media             = require('./lib/media'),
 
-    watchAnimation    = true
-    watchAnimation    = true,
-    watchTransition   = true
+    slice             = Array.prototype.slice,
+    formBubbling      = false
 
 // Overriding key.filter to ignore key bindings in contenteditable fields
 key.filter = function(event){
@@ -42,9 +41,9 @@ module.exports = {
   beforeUnload: page.beforeUnload,
   beforeRender: page.beforeRender,
   afterAnimation: afterAnimation,
-  watchAnimation: watchAnimation,
+  watchAnimations: afterAnimation.watch,
   afterTransition: afterTransition,
-  watchTransition: watchTransition,
+  watchTransitions: afterTransition.watch,
 
   // Media query events
   media: media,
@@ -75,13 +74,7 @@ module.exports = {
   submit: submit
 }
 
-page.ready(function() {
-  if (watchAnimation) afterAnimation.watch()
-  if (watchTransition) afterTransition.watch()
-})
-
 // Add support for unbinding a key event after it is called
-//
 function keyOne (keys, scope, fn) {
 
   if (typeof scope == 'function') {

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 1.13.1 (2020-02-19)
+- FIX: Limit animation event watching to elements which support dataset properties.
+- FIX: `Event.watchAnimations` and `Event.watchTransitions` are now functions which must be triggered if the user wants to watch animation end events which are already in progress
+
 ### 1.13.0 (2019-10-09)
 - NEW: `event.afterTransition( el, callback, [true or number] )`
   Just like afterAnimation this will trigger after transitions end, or when the callback time limit is exceeded.
